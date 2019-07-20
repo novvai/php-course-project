@@ -35,9 +35,9 @@ class Kernel
 
     public function execute()
     {
-        list($class, $execMethod, $arguments) = $this->getRequestedRoute();
+        list($class, $execMethod, $arguments, $middleware_group) = $this->getRequestedRoute();
 
-        echo $this->middleware_instance->process('auth',[$class, $execMethod, $arguments]);
+        echo $this->middleware_instance->process($middleware_group,[$class, $execMethod, $arguments]);
         
         $this->send();
     }

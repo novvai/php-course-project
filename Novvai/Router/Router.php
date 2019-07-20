@@ -18,7 +18,8 @@ class Router
     }
     private $routes = [
         "GET" => [],
-        "POST" => []
+        "POST" => [],
+        "DELETE" => [],
     ];
 
     private $middlewareBuffer = [];
@@ -97,6 +98,15 @@ class Router
         $instance = self::getInstance();
         $route = self::prepend_path_slash($route);
         $instance->registerRoute('POST', $route, $executioner);
+    }
+    /**
+     * Registers a DELETE route
+     */
+    public static function delete(string $route, string $executioner): void
+    {
+        $instance = self::getInstance();
+        $route = self::prepend_path_slash($route);
+        $instance->registerRoute('DELETE', $route, $executioner);
     }
 
     public static function middlewareGroup($string, callable $fn)

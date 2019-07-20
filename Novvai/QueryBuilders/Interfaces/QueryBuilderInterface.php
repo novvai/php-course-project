@@ -30,8 +30,8 @@ interface QueryBuilderInterface
     /** 
      * DB managment
      */
-    public function drop(): QueryBuilderInterface;
     public function finishMigration(): QueryBuilderInterface;
+    public function drop(string $tableName): QueryBuilderInterface;
     public function addCollumn(string $collumn): QueryBuilderInterface;
     public function startMigration(string $tableName): QueryBuilderInterface;
 }

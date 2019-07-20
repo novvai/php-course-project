@@ -20,6 +20,7 @@ class Request
     private function __construct()
     {
         $this->headersInstance = new Headers();
+        $this->buildRequestBag();
     }
 
     public function headers()

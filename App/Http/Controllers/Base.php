@@ -1,6 +1,14 @@
 <?php
+
 namespace App\Http\Controllers;
 
-abstract class Base{
-    
+use Novvai\Request\Request;
+
+abstract class Base
+{
+    protected $request;
+    public function __construct()
+    {
+        $this->request = Request::getInstance();
+    }
 }

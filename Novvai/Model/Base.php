@@ -14,6 +14,8 @@ class Base implements Arrayable
 
     protected $visible = ['*'];
 
+    protected $disableTimeStamps = false;
+
     /**
      * @var QueryBuilderInterface
      */
@@ -35,6 +37,41 @@ class Base implements Arrayable
         $this->bootstrap();
     }
 
+    /**
+     * Attempts to create record from given data,
+     * or data that is stored on the initialez model
+     * 
+     * @param mixed $createInfo
+     * 
+     * @return self|null
+     */
+    public function create($createInfo = null)
+    {
+        $createInfo = $createInfo ?: get_public_vars($this);
+
+        $this->builder->create($createInfo);
+
+        $this->connection->execute($this->builder->getQuery());
+
+        return $this->wrap([$createInfo])->first();
+    }
+
+    /**
+     * Attempts to create record from given data,
+     * or data that is stored on the initialez model
+     * 
+     * @param mixed $createInfo
+     * 
+     * @return self|null
+     */
+    public function delete($deleteData = null)
+    {
+        $deleteData = $deleteData ?: get_public_vars($this);
+
+        $this->builder->delete($deleteData);
+
+        return $this->connection->execute($this->builder->getQuery());
+    }
 
     public function all(): Stackable
     {
@@ -53,6 +90,11 @@ class Base implements Arrayable
         return $this->tableName;
     }
 
+    private function setTimeStampOptions()
+    {
+        $this->disableTimeStamps ? $this->builder->disableTimeStamps() : null;
+    }
+
     private function setTableName(): void
     {
         $this->tableName = $this->tableName != "" ? $this->tableName : $this->extractTableName(get_class($this));
@@ -60,6 +102,7 @@ class Base implements Arrayable
 
     private function bootstrap()
     {
+        $this->setTimeStampOptions();
         $this->setTableName();
         $this->dbSetup();
     }
@@ -125,11 +168,11 @@ class Base implements Arrayable
         return array_keys($item);
     }
 
-    private static  function buildCollective($fields, $collectedData)
+    private static function buildCollective($fields, $collectedData)
     {
         $collective = [];
-        foreach($collectedData as $resultItem){
-            $class = Container::make(self::class);
+        foreach ($collectedData as $resultItem) {
+            $class = Container::make(static::class);
 
             foreach ($fields as $field) {
                 $class->{$field} = $resultItem[$field];
@@ -137,7 +180,7 @@ class Base implements Arrayable
 
             $collective[] = $class;
         }
-    
+
         return $collective;
     }
 
@@ -145,5 +188,4 @@ class Base implements Arrayable
     {
         return get_public_vars($this);
     }
-
 }

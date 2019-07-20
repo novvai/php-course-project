@@ -8,6 +8,16 @@ use InvalidArgumentException;
 class PdoBuilder extends Base
 {
     /**
+     * Disables the timestamps auto appending
+     * 
+     * @return void
+     */
+    public function disableTimeStamps()
+    {
+        $this->shouldUseTimeStamps = false;
+    }
+
+    /**
      * Creates Query string fetching all entries from give Table
      * by given single constraint
      * 
@@ -164,9 +174,44 @@ class PdoBuilder extends Base
     }
 
     /**
+     * Query that adds record to given DB
+     * 
+     * @param array $createInfo
+     * 
+     * @return self
+     */
+    public function create(array $createInfo):QueryBuilderInterface
+    {
+        list($columns, $values) = $this->normalize($createInfo, true);
+
+        $this->query = "INSERT INTO {$this->tableName} ({$columns}) VALUES ($values)";
+
+        return $this;
+    }
+    /**
+     * Query that deletes record from DB
+     * 
+     * @param array $identifiers
+     * 
+     * @return self
+     */
+    public function delete(array $identifiers):QueryBuilderInterface
+    {
+        $queryParams = map($identifiers, function ($item, $key)
+        {   
+            return "$key=".(is_numeric($item)?$item:"'$item'");
+        });
+
+        $queryParams = implode(' and ', $queryParams);
+        $this->query = "DELETE FROM {$this->tableName} WHERE $queryParams";
+        return $this;
+    }
+
+
+    /**
      * @retunr self
      */
-    public function drop($tableName): QueryBuilderInterface
+    public function drop(string $tableName): QueryBuilderInterface
     {
         $this->query = "DROP TABLE $tableName";
         return $this;

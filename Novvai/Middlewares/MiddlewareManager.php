@@ -42,7 +42,7 @@ class MiddlewareManager
 
     public function process($group, $lastCall)
     {
-        $group = $this->get($group);
+        $group = $this->extractMiddlewares($group);
         $group[] = $lastCall;
 
         return $this->handle($group);
@@ -61,5 +61,19 @@ class MiddlewareManager
         }
 
         return call_user_func_array([$cl, $arr[1]], $arr[2]);
+    }
+
+    private function extractMiddlewares($group)
+    {
+        $result = [];
+        if (is_null($group)) {
+            return $result;
+        }
+        
+        map($group, function ($item) use (&$result) {
+            $result = array_merge($result, $this->get($item));
+        });
+
+        return $result;
     }
 }

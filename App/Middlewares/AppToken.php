@@ -14,7 +14,7 @@ class AppToken implements MiddlewareInterface
         $applications = Container::make(Application::class);
         $applicationToken = $request->headers()->get('nv-application');
         $application = $applications->where("token", $applicationToken)->get()->first();
-        
+
         if (is_null($application)) {
             return JsonResponse::make()->error([
                 [

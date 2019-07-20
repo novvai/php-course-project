@@ -3,6 +3,7 @@
 namespace Novvai\QueryBuilders;
 
 use Novvai\QueryBuilders\Interfaces\QueryBuilderInterface;
+use DateTime;
 
 abstract class Base implements QueryBuilderInterface
 {
@@ -14,6 +15,7 @@ abstract class Base implements QueryBuilderInterface
     protected $driver;
 
     protected $hasOneColumn = false;
+    protected $shouldUseTimeStamps = true;
 
     /**
      * Name of the table that the queries
@@ -32,7 +34,7 @@ abstract class Base implements QueryBuilderInterface
     {
         $this->tableName = $name;
     }
-    public function setSelectableFields(array $fields):void
+    public function setSelectableFields(array $fields): void
     {
         $this->selectedFields = $fields;
     }
@@ -55,5 +57,60 @@ abstract class Base implements QueryBuilderInterface
     protected function getSelectableFields(): string
     {
         return implode(',', $this->selectedFields);
+    }
+
+    /**
+     * Creates comma separated strings for collumn and values 
+     * of the record for Query
+     * 
+     * @param array $data
+     * @param bool $creating
+     */
+    protected function normalize(array $data, bool $creating = false):array
+    {
+        $columns = array_keys($data);
+        $values = array_values($data);
+
+        $this->appendTimeStamps($columns, $values, $creating);
+
+        $values = $this->typeNormalization($values);
+
+        return [implode(",", $columns), implode(",", $values)];
+    }
+
+    /**
+     * Adds created and updated at fields implicitly
+     * 
+     * @param array $collumns
+     * @param array $values
+     */
+    protected function appendTimeStamps(&$collumns, &$values, $creating = false)
+    {
+        if (!$this->shouldUseTimeStamps) {
+            return;
+        }
+
+        $currentDate = (new DateTime())->format("Y-m-d H:i:s");
+        $collumns[] = "updated_at";
+        $values[] = $currentDate;
+        if ($creating) {
+            $collumns[] = "created_at";
+            $values[] = $currentDate;
+        }
+    }
+
+    /**
+     * Normalizes the values for DB query use
+     * adds single quotes at the strings 
+     * 
+     * @param array $data
+     * 
+     * @return array
+     */
+    protected function typeNormalization(array $data) : array
+    {
+        return map($data, function ($item) {
+            return is_numeric($item) ? $item : "'$item'";
+        });
     }
 }
