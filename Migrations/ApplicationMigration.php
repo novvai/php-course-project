@@ -16,4 +16,11 @@ class ApplicationMigration extends Base
             $builder->addTimeStamps();
         });
     }
+
+    public function rollback()
+    {
+        $this->down(function (QueryBuilderInterface $builder) {
+            $builder->drop('applications');
+        });
+    }
 }

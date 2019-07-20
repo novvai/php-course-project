@@ -28,8 +28,9 @@ interface QueryBuilderInterface
     public function autoIncrement(string $name = "id"): QueryBuilderInterface;
 
     /** 
-     * DB creation
+     * DB managment
      */
+    public function drop(): QueryBuilderInterface;
     public function finishMigration(): QueryBuilderInterface;
     public function addCollumn(string $collumn): QueryBuilderInterface;
     public function startMigration(string $tableName): QueryBuilderInterface;

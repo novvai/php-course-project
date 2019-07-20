@@ -18,4 +18,11 @@ class UserMigration extends Base
             $builder->unique('email');
         });
     }
+
+    public function rollback()
+    {
+        $this->down(function (QueryBuilderInterface $builder) {
+            $builder->drop('users');
+        });
+    }
 }

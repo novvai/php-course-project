@@ -164,6 +164,15 @@ class PdoBuilder extends Base
     }
 
     /**
+     * @retunr self
+     */
+    public function drop($tableName): QueryBuilderInterface
+    {
+        $this->query = "DROP TABLE $tableName";
+        return $this;
+    }
+
+    /**
      * @return self
      */
     public function startMigration(string $tableName): QueryBuilderInterface
