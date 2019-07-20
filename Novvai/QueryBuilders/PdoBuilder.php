@@ -70,7 +70,7 @@ class PdoBuilder extends Base
      * 
      * @return self
      */
-    public function autoIncriment(string $name = "id"): QueryBuilderInterface
+    public function autoIncrement(string $name = "id"): QueryBuilderInterface
     {
         $this->shouldStartNewCollumn();
 
@@ -175,6 +175,27 @@ class PdoBuilder extends Base
     /**
      * @return self
      */
+    public function addSoftDelete(): QueryBuilderInterface
+    {
+        $this->shouldStartNewCollumn();
+        $this->query .= " deleted_at DATETIME NOT NULL ";
+
+        return $this;
+    }
+
+    /**
+     * @return self
+     */
+    public function addTimeStamps(): QueryBuilderInterface
+    {
+        $this->shouldStartNewCollumn();
+        $this->query .= " created_at DATETIME NOT NULL , updated_at DATETIME NOT NULL ";
+
+        return $this;
+    }
+    /**
+     * @return self
+     */
     public function addColLumn(string $collumn): QueryBuilderInterface
     {
         $this->shouldStartNewCollumn();
@@ -203,7 +224,7 @@ class PdoBuilder extends Base
     {
         return $this->query;
     }
-    
+
     /**
      * Basic select query without constraints
      */
@@ -221,10 +242,10 @@ class PdoBuilder extends Base
      * 
      * @return string
      */
-    private function getConstraintFormatted(array $args):string
+    private function getConstraintFormatted(array $args): string
     {
         $argCount = count($args);
-        
+
         switch ($argCount) {
             case 2:
                 return "{$args[0]}=" . (is_numeric($args[1]) ? $args[1] : "'{$args[1]}'");

@@ -8,7 +8,7 @@ abstract class Base implements DBConnectionInterface
 {
     protected static $_configPath = __DIR__ . "/config/db.php";
 
-    protected $config = [];
+    protected static $config = null;
 
     /**
      * @var PDO;
@@ -53,6 +53,8 @@ abstract class Base implements DBConnectionInterface
      */
     private function loadConfig(): void
     {
-        $this->config = require_once(static::$_configPath);
+        if (is_null(static::$config)) {
+            static::$config = require_once(static::$_configPath);
+        }   
     }
 }

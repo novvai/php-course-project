@@ -2,11 +2,22 @@
 
 namespace Novvai\Model;
 
+use Novvai\Container;
+use Novvai\Stacks\Stack;
+use Novvai\Interfaces\Arrayable;
+use Novvai\Stacks\Interfaces\Stackable;
 use Novvai\DBDrivers\Interfaces\DBConnectionInterface;
 use Novvai\QueryBuilders\Interfaces\QueryBuilderInterface;
 
-class Base
+class Base implements Arrayable
 {
+
+    protected $visible = ['*'];
+
+    /**
+     * @var QueryBuilderInterface
+     */
+    protected $builder;
     /**
      * @var DBConnectionInterface
      */
@@ -25,10 +36,11 @@ class Base
     }
 
 
-    public function all(): array
+    public function all(): Stackable
     {
-        $query = $this->builder->all();
-        return $this->connection->getBy($query);
+        $this->builder->setSelectableFields($this->visible);
+
+        return $this->get();
     }
 
     private function dbSetup()
@@ -65,13 +77,13 @@ class Base
     }
 
     public function andWhere(...$args): Base
-    { 
+    {
         $this->builder->andWhere(...$args);
 
         return $this;
     }
     public function orWhere(...$args): Base
-    { 
+    {
         $this->builder->orWhere(...$args);
 
         return $this;
@@ -91,7 +103,47 @@ class Base
         $this->builder->setSelectableFields($this->visible);
         $this->builder->buildQuery();
         $query = $this->builder->getQuery();
+        $result =  $this->connection->getBy($query);
 
-        return $this->connection->getBy($query);
+        return $this->wrap($result);
     }
+
+    private function wrap(array $collectedData): Stackable
+    {
+        $stack = Stack::make();
+        if (count($collectedData) == 0) {
+            return $stack;
+        }
+        $fields = $this->getAvailableFields(reset($collectedData));
+        $collective = self::buildCollective($fields, $collectedData);
+
+        return $stack->collect($collective);
+    }
+
+    private static function getAvailableFields($item)
+    {
+        return array_keys($item);
+    }
+
+    private static  function buildCollective($fields, $collectedData)
+    {
+        $collective = [];
+        foreach($collectedData as $resultItem){
+            $class = Container::make(self::class);
+
+            foreach ($fields as $field) {
+                $class->{$field} = $resultItem[$field];
+            }
+
+            $collective[] = $class;
+        }
+    
+        return $collective;
+    }
+
+    public function toArray()
+    {
+        return get_public_vars($this);
+    }
+
 }

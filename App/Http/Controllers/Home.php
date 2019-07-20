@@ -2,27 +2,30 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\User;
+use Novvai\Container;
 use Novvai\Request\Request;
 use Novvai\Response\JsonResponse;
-use Novvai\Container;
-use App\Models\User;
 
 class Home extends Base
 {
     public function index()
     {
         $user = Container::make(User::class);
-        return JsonResponse::make()->data(['users'=>$user->all()]);
+        $users = $user->all();
+        
+        return JsonResponse::make()->data(['users' => $users]);
     }
 
     public function show($user_id)
     {
         $userModel = Container::make(User::class);
 
-        $user = $userModel->where("id", $user_id)->get();
+        $user = $userModel->where("id", $user_id)->get()->first();
 
-        return JsonResponse::make()->data(['user'=>$user]);
-    }
+
+        return JsonResponse::make()->data(['user' => $user]);
+    }   
 
     public function create()
     {

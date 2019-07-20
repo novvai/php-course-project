@@ -3,6 +3,7 @@
 namespace Novvai\Schema;
 
 use Novvai\DBDrivers\Interfaces\DBConnectionInterface;
+use Novvai\QueryBuilders\Interfaces\QueryBuilderInterface;
 
 abstract class Base
 {

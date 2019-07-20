@@ -2,6 +2,8 @@
 
 namespace Novvai\Response;
 
+use Novvai\Interfaces\Arrayable;
+
 class JsonResponse
 {
     private $data = [];
@@ -12,8 +14,6 @@ class JsonResponse
     {
         header("Content-Type:application/json");
     }
-
-
 
     public static function make()
     {
@@ -50,9 +50,9 @@ class JsonResponse
     private function buildResponse(): array
     {
         $response = [
-            'data' => $this->data,
-            'success' => $this->success,
-            'errors' => $this->errors
+            'data' => $this->normalize($this->data),
+            'success' => $this->normalize($this->success),
+            'errors' => $this->normalize($this->errors)
         ];
 
         map($response, function ($item, $key) use (&$response) {
@@ -60,6 +60,17 @@ class JsonResponse
                 unset($response[$key]);
             }
         });
+
         return $response;
+    }
+
+    private function normalize(array $data)
+    {
+        return map($data, function ($item) { 
+            if($item instanceof Arrayable){
+                return $item->toArray();
+            }
+            return $item;
+        });
     }
 }

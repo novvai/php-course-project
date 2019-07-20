@@ -18,12 +18,14 @@ interface QueryBuilderInterface
     public function text(): QueryBuilderInterface;
     public function unique(): QueryBuilderInterface;
     public function notNull(): QueryBuilderInterface;
+    public function addTimeStamps(): QueryBuilderInterface;
+    public function addSoftDelete(): QueryBuilderInterface;
     public function string(int $max): QueryBuilderInterface;
     public function integer(int $max): QueryBuilderInterface;
     public function float($max, $points): QueryBuilderInterface;
-    public function decimal($max, $points): QueryBuilderInterface;
-    public function autoIncriment(string $name = "id"): QueryBuilderInterface;
     public function default($defaultValue): QueryBuilderInterface;
+    public function decimal($max, $points): QueryBuilderInterface;
+    public function autoIncrement(string $name = "id"): QueryBuilderInterface;
 
     /** 
      * DB creation

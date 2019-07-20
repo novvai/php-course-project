@@ -31,8 +31,8 @@ class PdoDriver extends Base
      */
     protected function dbConnect(): void
     {
-        $db_type = $this->config['connection'];
-        list($host, $port, $db_name, $user, $pass) = array_values($this->config[$db_type]);
+        $db_type = static::$config['connection'];
+        list($host, $port, $db_name, $user, $pass) = array_values(static::$config[$db_type]);
 
         $dsn = "$db_type:host=$host;dbname=$db_name;port=$port";
 
@@ -50,7 +50,7 @@ class PdoDriver extends Base
     public function getBy(string $query): array
     {
         $queryStatement = $this->connection->query($query);
-        
+
         return $queryStatement->fetchAll();
     }
 

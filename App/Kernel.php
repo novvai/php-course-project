@@ -35,17 +35,11 @@ class Kernel
 
     public function execute()
     {
-        list($class, $execMethod, $arguments, $middlewareGroups) = $this->getRequestedRoute();
+        list($class, $execMethod, $arguments) = $this->getRequestedRoute();
 
-        $executioner = self::makeExecutioner($class);
-
-
-        return $this->middleware_instance->process('auth',[$class, $execMethod, $arguments]);
-
-
-        if (method_exists($executioner, $execMethod)) {
-            return call_user_func_array([$executioner, $execMethod], $arguments);
-        }
+        echo $this->middleware_instance->process('auth',[$class, $execMethod, $arguments]);
+        
+        $this->send();
     }
 
 
@@ -56,9 +50,10 @@ class Kernel
 
         return $this->router()->getRequestedRoute($method, $path);
     }
-
-    private static function makeExecutioner(string $className): Controller
+    
+    private function send()
     {
-        return Container::make($className);
+        session_write_close(); //close the session
+        fastcgi_finish_request();
     }
 }

@@ -16,19 +16,34 @@ if (!function_exists("dd")) {
     }
 };
 
-if (!function_exists("map")) {
-    function map(array $arr, callable $func): void
+
+if (!function_exists("get_public_vars")) {
+    function get_public_vars($obj)
     {
+        return get_object_vars($obj);
+    }
+};
+
+if (!function_exists("map")) {
+    function map(array $arr, callable $func): array
+    {
+        $newArray = [];
         foreach ($arr as $key => $item) {
-            $func($item, $key);
+            $result =  $func($item, $key);
+            if (key_exists($key, $newArray)) {
+                $newArray[$key] = array_merge($newArray[$key], [$result]);
+                continue;
+            }
+            $newArray[$key] = $result;
         }
+        return $newArray;
     }
 };
 
 if (!function_exists("plural")) {
     function plural(string $singular): string
     {
-        $last = $singular[strlen($singular)-1];
+        $last = $singular[strlen($singular) - 1];
         switch ($last) {
             case 'y':
                 return substr($singular, 0, -1) . 'ies';

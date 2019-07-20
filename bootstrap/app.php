@@ -17,8 +17,10 @@ spl_autoload_register(function ($class_name) {
 require_once __DIR__ . DIRECTORY_SEPARATOR . ".." . DIRECTORY_SEPARATOR . "helpers.php";
 
 DBDriver::setConfigPath(base_path() . '/config/db.php');
+
 MiddlewareManager::register([
     "auth" => [
+        App\Middlewares\AppToken::class,
         App\Middlewares\AuthToken::class
     ]
 ]);

@@ -13,7 +13,7 @@ class Container
     {
         static::$bindings = array_merge(static::$bindings, $binding);
     }
-
+    
     static public function make(string $className)
     {
         $reflection = new ReflectionClass($className);
@@ -51,4 +51,6 @@ class Container
             return static::$bindings[$className];
         }
     }
+
+
 }
