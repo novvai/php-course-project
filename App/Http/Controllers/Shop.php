@@ -3,12 +3,28 @@
 namespace App\Http\Controllers;
 
 use Novvai\Container;
-use Novvai\Request\Request;
 use App\Models\Shop as ShopModel;
 use Novvai\Response\JsonResponse;
+use Novvai\Model\Traits\Filterable;
 
 class Shop extends Base
 {
+    use Filterable;
+    public function index()
+    {
+        $shops = Container::make(ShopModel::class);
+        $this->handleFilters($shops, $this->request->get('filters',[]));
+
+        return JsonResponse::make()->data([
+            "shops" => $shops->all()
+        ]);
+    }
+
+    /**
+     * Creates record
+     * 
+     * @return JsonResponse containing status and data object
+     */
     public function create()
     {
         $info = $this->request->all();
@@ -18,7 +34,6 @@ class Shop extends Base
         $shopModel->opened_time = $info['opened_time'];
         $shop = $shopModel->create();
 
-
         return JsonResponse::make()->data([
             "shop" => $shop
         ])->success([
@@ -26,15 +41,27 @@ class Shop extends Base
             "message" => "shop created"
         ]);
     }
-
+    /**
+     * Attempts to delete shop
+     * 
+     * @param Integer $id
+     * 
+     * @return JsonResponse
+     */
     public function delete($id)
     {
         $shopModel = Container::make(ShopModel::class);
-        $shop = $shopModel->delete(["id"=>$id]);
+        $response = JsonResponse::make();
 
-        return JsonResponse::make()->success([
-            "code" => "200",
-            "message" => "shop deleted"
+        if ($shopModel->delete(["id" => $id])) {
+            return $response->success([
+                "code" => "2000",
+                "message" => "Shop deleted"
+            ]);
+        }
+        return $response->error([
+            "code" => "4000",
+            "message" => "Shop was not found"
         ]);
     }
 }

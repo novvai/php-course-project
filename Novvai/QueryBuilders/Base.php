@@ -16,6 +16,20 @@ abstract class Base implements QueryBuilderInterface
 
     protected $hasOneColumn = false;
     protected $shouldUseTimeStamps = true;
+    
+    /**
+     * Main query parameters
+     * 
+     * @var string
+     */
+    protected $query = '';
+    
+    /**
+     * Additional query parameters like LIMIT and ORDER
+     * 
+     * @var string
+     */
+    protected $queryAdditions = '';
 
     /**
      * Name of the table that the queries

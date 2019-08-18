@@ -59,7 +59,17 @@ class PdoBuilder extends Base
         return $this;
     }
 
-
+    /**
+     * Adds limit to the query
+     * 
+     * @return self
+     */
+    public function paginate($offset, $limit=10): QueryBuilderInterface
+    {
+        $this->queryAdditions = $this->queryAdditions . " LIMIT $offset , $limit ";
+        
+        return $this;
+    }
 
     /**
      * Creates Query string fetching all entries from give Table
@@ -284,7 +294,7 @@ class PdoBuilder extends Base
      */
     public function buildQuery(): QueryBuilderInterface
     {
-        $this->query = "SELECT {$this->getSelectableFields()} FROM {$this->tableName}" . $this->query;
+        $this->query = "SELECT {$this->getSelectableFields()} FROM {$this->tableName}" . $this->query . $this->queryAdditions;
 
         return $this;
     }

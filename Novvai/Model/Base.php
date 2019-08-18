@@ -38,6 +38,20 @@ class Base implements Arrayable
     }
 
     /**
+     * Adds pagination to the query
+     * 
+     * @param int $offset
+     * @param int $limit = 10
+     * @return self
+     */
+    public function paginate($offset, $limit = 10)
+    {
+        $this->builder->paginate($offset, $limit);
+        
+        return $this;
+    }
+
+    /**
      * Attempts to create record from given data,
      * or data that is stored on the initialez model
      * 
@@ -57,8 +71,7 @@ class Base implements Arrayable
     }
 
     /**
-     * Attempts to create record from given data,
-     * or data that is stored on the initialez model
+     * Attempts to delete given record
      * 
      * @param mixed $createInfo
      * 
@@ -75,8 +88,6 @@ class Base implements Arrayable
 
     public function all(): Stackable
     {
-        $this->builder->setSelectableFields($this->visible);
-
         return $this->get();
     }
 
@@ -98,25 +109,6 @@ class Base implements Arrayable
     private function setTableName(): void
     {
         $this->tableName = $this->tableName != "" ? $this->tableName : $this->extractTableName(get_class($this));
-    }
-
-    private function bootstrap()
-    {
-        $this->setTimeStampOptions();
-        $this->setTableName();
-        $this->dbSetup();
-    }
-
-    private function extractTableName(string $className)
-    {
-        $cl = end(explode('\\', $className));
-        preg_match_all('/[A-Z]/', $cl, $matches);
-        for ($i = 0; $i < count($matches[0]); $i++) {
-            $replacer = ($i ?  "_" : "") . strtolower($matches[0][$i]);
-            $cl = preg_replace("/{$matches[0][$i]}/s", $replacer, $cl, 1);
-        }
-
-        return plural($cl);
     }
 
     public function andWhere(...$args): Base
@@ -146,6 +138,7 @@ class Base implements Arrayable
         $this->builder->setSelectableFields($this->visible);
         $this->builder->buildQuery();
         $query = $this->builder->getQuery();
+
         $result =  $this->connection->getBy($query);
 
         return $this->wrap($result);
@@ -187,5 +180,25 @@ class Base implements Arrayable
     public function toArray()
     {
         return get_public_vars($this);
+    }
+
+
+    private function bootstrap()
+    {
+        $this->setTimeStampOptions();
+        $this->setTableName();
+        $this->dbSetup();
+    }
+
+    private function extractTableName(string $className)
+    {
+        $cl = end(explode('\\', $className));
+        preg_match_all('/[A-Z]/', $cl, $matches);
+        for ($i = 0; $i < count($matches[0]); $i++) {
+            $replacer = ($i ?  "_" : "") . strtolower($matches[0][$i]);
+            $cl = preg_replace("/{$matches[0][$i]}/s", $replacer, $cl, 1);
+        }
+
+        return plural($cl);
     }
 }

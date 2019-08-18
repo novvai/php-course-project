@@ -43,12 +43,12 @@ class Request
      * 
      * @return null|string|array
      */
-    public function get(string $key)
+    public function get(string $key, $default=null)
     {
         if ($this->has($key)) {
             return $this->requestBag[$key];
         }
-        return null;
+        return $default;
     }
 
     /**
