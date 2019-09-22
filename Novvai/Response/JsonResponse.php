@@ -6,7 +6,7 @@ use Novvai\Interfaces\Arrayable;
 
 class JsonResponse
 {
-    private $data = [];
+    private $payload = [];
     private $errors = [];
     private $success = [];
 
@@ -20,9 +20,9 @@ class JsonResponse
         return new static();
     }
 
-    public function data(array $data): self
+    public function payload(array $payload): self
     {
-        $this->data = $data;
+        $this->payload = $payload;
         return $this;
     }
 
@@ -50,7 +50,7 @@ class JsonResponse
     private function buildResponse(): array
     {
         $response = [
-            'data' => $this->normalize($this->data),
+            'payload' => $this->normalize($this->payload),
             'success' => $this->normalize($this->success),
             'errors' => $this->normalize($this->errors)
         ];

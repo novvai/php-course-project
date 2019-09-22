@@ -14,7 +14,7 @@ class Home extends Base
         $user = Container::make(User::class);
         $users = $user->all();
         
-        return JsonResponse::make()->data(['users' => $users]);
+        return JsonResponse::make()->payload(['users' => $users]);
     }
 
     public function show($user_id)
@@ -24,7 +24,7 @@ class Home extends Base
         $user = $userModel->where("id", $user_id)->get()->first();
 
 
-        return JsonResponse::make()->data(['user' => $user]);
+        return JsonResponse::make()->payload(['user' => $user]);
     }   
 
     public function create()
@@ -32,7 +32,7 @@ class Home extends Base
         $request = Request::getInstance();
         $username = $request->get('username');
         $response = JsonResponse::make();
-        $response->data([$username]);
+        $response->payload([$username]);
 
         return $response;
     }

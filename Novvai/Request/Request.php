@@ -72,6 +72,7 @@ class Request
         $params = empty($_POST) ? json_decode(file_get_contents("php://input"), true) ?: [] : $_POST;
         $this->requestBag = array_merge($this->requestBag, $params);
     }
+    
     /**
      * Fill the request bag with GET and POST parameters
      */

@@ -15,7 +15,7 @@ class Shop extends Base
         $shops = Container::make(ShopModel::class);
         $this->handleFilters($shops, $this->request->get('filters',[]));
 
-        return JsonResponse::make()->data([
+        return JsonResponse::make()->payload([
             "shops" => $shops->all()
         ]);
     }
@@ -34,7 +34,7 @@ class Shop extends Base
         $shopModel->opened_time = $info['opened_time'];
         $shop = $shopModel->create();
 
-        return JsonResponse::make()->data([
+        return JsonResponse::make()->payload([
             "shop" => $shop
         ])->success([
             "code" => "200",

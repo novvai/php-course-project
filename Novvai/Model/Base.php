@@ -47,7 +47,7 @@ class Base implements Arrayable
     public function paginate($offset, $limit = 10)
     {
         $this->builder->paginate($offset, $limit);
-        
+
         return $this;
     }
 
@@ -86,37 +86,31 @@ class Base implements Arrayable
         return $this->connection->execute($this->builder->getQuery());
     }
 
+    /**
+     * @return Novvai\Stacks\Stack
+     */
     public function all(): Stackable
     {
         return $this->get();
     }
 
-    private function dbSetup()
-    {
-        $this->builder->setTableName($this->getTableName());
-    }
-
-    private function getTableName(): string
-    {
-        return $this->tableName;
-    }
-
-    private function setTimeStampOptions()
-    {
-        $this->disableTimeStamps ? $this->builder->disableTimeStamps() : null;
-    }
-
-    private function setTableName(): void
-    {
-        $this->tableName = $this->tableName != "" ? $this->tableName : $this->extractTableName(get_class($this));
-    }
-
+    /**
+     * @param array $args
+     * 
+     * @return self
+     */
     public function andWhere(...$args): Base
     {
         $this->builder->andWhere(...$args);
 
         return $this;
     }
+
+    /**
+     * @param array $args
+     * 
+     * @return self
+     */
     public function orWhere(...$args): Base
     {
         $this->builder->orWhere(...$args);
@@ -125,15 +119,21 @@ class Base implements Arrayable
     }
 
     /**
+     * @param array $args
      * 
+     * @return self
      */
     public function where(...$args): Base
     {
         $this->builder->where(...$args);
+
         return $this;
     }
 
-    public function get()
+    /**
+     * @return Novvai\Stacks\Stack
+     */
+    public function get(): Stackable
     {
         $this->builder->setSelectableFields($this->visible);
         $this->builder->buildQuery();
@@ -144,23 +144,48 @@ class Base implements Arrayable
         return $this->wrap($result);
     }
 
+    /**
+     * Wraps the data into Stack
+     * 
+     * @param array $collectedData
+     * 
+     * @return Novvai\Stacks\Stack
+     */
     private function wrap(array $collectedData): Stackable
     {
         $stack = Stack::make();
+        // check if there is anything the $collectedData
         if (count($collectedData) == 0) {
             return $stack;
         }
+
         $fields = $this->getAvailableFields(reset($collectedData));
         $collective = self::buildCollective($fields, $collectedData);
 
         return $stack->collect($collective);
     }
 
+    /**
+     * Extracts all keys from collected data
+     * 
+     * @param array $item
+     * 
+     * @return array
+     */
     private static function getAvailableFields($item)
     {
         return array_keys($item);
     }
 
+    /**
+     * Builds an array of classes representing
+     * DataBase records
+     * 
+     * @param array $fields
+     * @param array $collectedData 
+     * 
+     * @return array
+     */
     private static function buildCollective($fields, $collectedData)
     {
         $collective = [];
@@ -177,12 +202,11 @@ class Base implements Arrayable
         return $collective;
     }
 
-    public function toArray()
-    {
-        return get_public_vars($this);
-    }
-
-
+    /**
+     * It's all coming together
+     * 
+     * @return void
+     */
     private function bootstrap()
     {
         $this->setTimeStampOptions();
@@ -190,7 +214,49 @@ class Base implements Arrayable
         $this->dbSetup();
     }
 
-    private function extractTableName(string $className)
+    /**
+     * @return void
+     */
+    private function dbSetup()
+    {
+        $this->builder->setTableName($this->getTableName());
+    }
+
+    /**
+     * @return string
+     */
+    private function getTableName(): string
+    {
+        return $this->tableName;
+    }
+
+    /**
+     * @return void
+     */
+    private function setTimeStampOptions()
+    {
+        $this->disableTimeStamps ? $this->builder->disableTimeStamps() : null;
+    }
+
+    /**
+     * @return void
+     */
+    private function setTableName(): void
+    {
+        $this->tableName = $this->tableName != "" ? $this->tableName : $this->extractTableName(get_class($this));
+    }
+
+    /**
+     * Generates table name, based on convention, from the Class name
+     * convetion:
+     *  - name = UserPermission
+     *  - table = user_permissions
+     * 
+     * @param string
+     * 
+     * @return string
+     */
+    private function extractTableName(string $className): string
     {
         $cl = end(explode('\\', $className));
         preg_match_all('/[A-Z]/', $cl, $matches);
@@ -200,5 +266,13 @@ class Base implements Arrayable
         }
 
         return plural($cl);
+    }
+
+    /**
+     * @inheridoc
+     */
+    public function toArray()
+    {
+        return get_public_vars($this);
     }
 }
