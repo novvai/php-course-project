@@ -25,7 +25,7 @@ class Home extends Base
         $userModel = Container::make(User::class);
 
         $user = $userModel->where("id", $user_id)->get()->first();
-
+        
 
         return JsonResponse::make()->payload(['user' => $user]);
     }   

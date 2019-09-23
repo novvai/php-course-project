@@ -16,6 +16,19 @@ if (!function_exists("dd")) {
     }
 };
 
+if (!function_exists("generate_rand_string")) {
+    function generate_rand_string($len = 64)
+    {
+        $characters = '_-+*0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ';
+        $dictLen = strlen($characters);
+        $randStr = "";
+        for ($i=0; $i < $len; $i++) { 
+            $randStr .= $characters[rand(0,$dictLen)];
+        } 
+
+        return $randStr;
+    }
+};
 
 if (!function_exists("get_public_vars")) {
     function get_public_vars($obj)

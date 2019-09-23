@@ -67,7 +67,7 @@ class Base implements Arrayable
      * 
      * @param mixed $createInfo
      * 
-     * @return self|null
+     * @return Stackable
      */
     public function create($createInfo = null)
     {

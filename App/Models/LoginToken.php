@@ -7,7 +7,7 @@ use Novvai\Model\Base as BaseModel;
 class LoginToken extends BaseModel
 {
 
-    protected $private = ['id', 'created_at','updated_at'];
+    protected $private = ['id', 'created_at','updated_at','user_id'];
     /**
      * Foreign key
      */
