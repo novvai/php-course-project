@@ -13,8 +13,9 @@ class UserMigration extends Base
             $builder->autoIncrement();
             $builder->addCollumn("username")->string(64)->notNull();
             $builder->addCollumn("email")->string(64)->notNull();
-            $builder->addCollumn("password")->string(64)->notNull();
+            $builder->addCollumn("password")->string(255)->notNull();
 
+            $builder->addTimeStamps();
             $builder->unique('email');
         });
     }

@@ -11,8 +11,15 @@ use Novvai\QueryBuilders\Interfaces\QueryBuilderInterface;
 
 class Base implements Arrayable
 {
-
-    protected $visible = ['*'];
+    /**
+     * List of fields that should be retrived by the query
+     */
+    protected $retrievable = ['*'];
+    /**
+     * List of fields that are retrieved but should not be displayed
+     * in the final response
+     */
+    protected $private = [];
 
     protected $disableTimeStamps = false;
 
@@ -53,7 +60,7 @@ class Base implements Arrayable
 
     /**
      * Attempts to create record from given data,
-     * or data that is stored on the initialez model
+     * or data that is stored on the initialized model
      * 
      * @param mixed $createInfo
      * 
@@ -65,9 +72,14 @@ class Base implements Arrayable
 
         $this->builder->create($createInfo);
 
-        $this->connection->execute($this->builder->getQuery());
+        /** @var void|array $dbResponse */
+        $dbResponse = $this->connection->execute($this->builder->getQuery());
 
-        return $this->wrap([$createInfo])->first();
+        if ($dbResponse != 1) {
+            return $this->handleError($dbResponse);
+        }
+
+        return $this->wrap([$createInfo]);
     }
 
     /**
@@ -135,7 +147,7 @@ class Base implements Arrayable
      */
     public function get(): Stackable
     {
-        $this->builder->setSelectableFields($this->visible);
+        $this->builder->setSelectableFields($this->retrievable);
         $this->builder->buildQuery();
         $query = $this->builder->getQuery();
 
@@ -269,10 +281,47 @@ class Base implements Arrayable
     }
 
     /**
+     * 
+     */
+    private function handleError(array $err)
+    {
+        return Stack::make()->collect([
+            'errors' => $this->mapError((int) $err['code'])
+        ]);
+    }
+
+    private function mapError($code)
+    {
+        switch ($code) {
+            case 23000:
+                $response = [
+                    'code' => 4003,
+                    'message' => "Duplicated entry!"
+                ];
+                break;
+
+            default:
+                $response = [
+                    'code' => 66669999,
+                    'message' => "Banica Exception!"
+                ];
+                break;
+        }
+        return $response;
+    }
+
+    /**
      * @inheridoc
      */
     public function toArray()
     {
-        return get_public_vars($this);
+        $pubFields = get_public_vars($this);
+
+        foreach ($pubFields as $name => $_) {
+            if (in_array($name, $this->private)) {
+                unset($pubFields[$name]);
+            }
+        }
+        return $pubFields;
     }
 }

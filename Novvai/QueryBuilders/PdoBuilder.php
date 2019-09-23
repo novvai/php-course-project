@@ -64,10 +64,10 @@ class PdoBuilder extends Base
      * 
      * @return self
      */
-    public function paginate($offset, $limit=10): QueryBuilderInterface
+    public function paginate($offset, $limit = 10): QueryBuilderInterface
     {
         $this->queryAdditions = $this->queryAdditions . " LIMIT $offset , $limit ";
-        
+
         return $this;
     }
 
@@ -140,7 +140,8 @@ class PdoBuilder extends Base
      * 
      * @return self
      */
-    public function default($defaultValue): QueryBuilderInterface
+    public function
+    default($defaultValue): QueryBuilderInterface
     {
         $this->query .= " DEFAULT $defaultValue ";
         return $this;
@@ -152,6 +153,17 @@ class PdoBuilder extends Base
     public function integer(int $max): QueryBuilderInterface
     {
         $this->query .= " INT ($max) ";
+        return $this;
+    }
+
+    /**
+     * @return self
+     */
+    public function indexed(array $collumns): QueryBuilderInterface
+    {
+        $this->next();
+        $this->query .= " INDEX (".implode(',',$collumns).") ";
+
         return $this;
     }
     /**
@@ -177,6 +189,16 @@ class PdoBuilder extends Base
     /**
      * @return self
      */
+    public function dateTime(): QueryBuilderInterface
+    {
+        $this->query .= " DATETIME ";
+
+        return $this;
+    }
+
+    /**
+     * @return self
+     */
     public function float($max, $points): QueryBuilderInterface
     {
         $this->query .= " FLOAT ($max, $points) ";
@@ -190,7 +212,7 @@ class PdoBuilder extends Base
      * 
      * @return self
      */
-    public function create(array $createInfo):QueryBuilderInterface
+    public function create(array $createInfo): QueryBuilderInterface
     {
         list($columns, $values) = $this->normalize($createInfo, true);
 
@@ -205,11 +227,10 @@ class PdoBuilder extends Base
      * 
      * @return self
      */
-    public function delete(array $identifiers):QueryBuilderInterface
+    public function delete(array $identifiers): QueryBuilderInterface
     {
-        $queryParams = map($identifiers, function ($item, $key)
-        {   
-            return "$key=".(is_numeric($item)?$item:"'$item'");
+        $queryParams = map($identifiers, function ($item, $key) {
+            return "$key=" . (is_numeric($item) ? $item : "'$item'");
         });
 
         $queryParams = implode(' and ', $queryParams);
@@ -217,6 +238,21 @@ class PdoBuilder extends Base
         return $this;
     }
 
+    /**
+     * Creates foreign key restriction
+     * 
+     * @param string $foreign_key
+     * @param string $reference_table
+     * @param string $reference_key
+     * 
+     * @return self 
+     */
+    public function foreignCascade(string $foreign_key, string $reference_table, string $reference_key): QueryBuilderInterface
+    {
+        $this->next();
+        $this->query .= " FOREIGN KEY ($foreign_key) REFERENCES $reference_table($reference_key) ON DELETE CASCADE";
+        return $this;
+    }
 
     /**
      * @retunr self
@@ -257,6 +293,7 @@ class PdoBuilder extends Base
 
         return $this;
     }
+
     /**
      * @return self
      */

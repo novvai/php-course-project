@@ -42,6 +42,37 @@ abstract class Base implements IteratorAggregate, Stackable, Arrayable
         return $this;
     }
 
+    /** 
+     * @param string $dottedKeys
+     * 
+     * @return null|mixed
+     */
+    public function get(string $dottedKeys)
+    {
+        $keys = explode(".", $dottedKeys);
+        $result = $this->items;
+        foreach($keys as $key){
+            if(array_key_exists($key, $result))
+            {
+                $result = $result[$key];
+                continue;
+            }
+            return null;
+        }
+
+        return $result;
+    }
+
+    /**
+     * 
+     * @param string $dottedKeys
+     * @return bool
+     */
+    public function has(string $dottedKeys):bool
+    {
+        return !is_null($this->get($dottedKeys));
+    }
+
     /**
      * Extracts the first available item
      * Return null if there are no items

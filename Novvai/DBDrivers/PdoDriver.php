@@ -2,6 +2,7 @@
 
 namespace Novvai\DBDrivers;
 
+use Exception;
 use PDO;
 
 class PdoDriver extends Base
@@ -11,7 +12,7 @@ class PdoDriver extends Base
         PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC,
         PDO::ATTR_EMULATE_PREPARES   => false,
     ];
-    
+
     /**
      * Query String
      * 
@@ -62,6 +63,10 @@ class PdoDriver extends Base
      */
     public function execute(string $query)
     {
-        return $this->connection->exec($query);
+        try {
+            return $this->connection->exec($query);
+        } catch (Exception $e) {
+            return ["code" => $e->getCode(), "message" => $e->getMessage()];
+        }
     }
 }

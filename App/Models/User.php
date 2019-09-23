@@ -1,8 +1,11 @@
 <?php
+
 namespace App\Models;
 
 use Novvai\Model\Base as BaseModel;
 
-class User extends BaseModel{
-    protected $visible = ['id','username', 'email'];   
+class User extends BaseModel
+{
+    protected $retrievable = ['id', 'username', 'email', 'password'];
+    protected $private = ['password'];
 }

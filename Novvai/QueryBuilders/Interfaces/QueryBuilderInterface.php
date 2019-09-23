@@ -25,7 +25,9 @@ interface QueryBuilderInterface
     public function float($max, $points): QueryBuilderInterface;
     public function default($defaultValue): QueryBuilderInterface;
     public function decimal($max, $points): QueryBuilderInterface;
+    public function indexed(array $collumns): QueryBuilderInterface;
     public function autoIncrement(string $name = "id"): QueryBuilderInterface;
+    public function foreignCascade(string $foreign_key, string $reference_table, string $reference_key): QueryBuilderInterface;
 
     /** 
      * DB managment
