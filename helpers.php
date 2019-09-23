@@ -24,6 +24,13 @@ if (!function_exists("get_public_vars")) {
     }
 };
 
+if (!function_exists("get_short_name")) {
+    function get_short_name($class)
+    {
+        return strtolower((new \ReflectionClass($class))->getShortName());
+    }
+};
+
 if (!function_exists("map")) {
     function map(array $arr, callable $func): array
     {

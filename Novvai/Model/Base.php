@@ -8,6 +8,7 @@ use Novvai\Interfaces\Arrayable;
 use Novvai\Stacks\Interfaces\Stackable;
 use Novvai\DBDrivers\Interfaces\DBConnectionInterface;
 use Novvai\QueryBuilders\Interfaces\QueryBuilderInterface;
+use Traversable;
 
 class Base implements Arrayable
 {
@@ -20,6 +21,8 @@ class Base implements Arrayable
      * in the final response
      */
     protected $private = [];
+
+    
 
     protected $disableTimeStamps = false;
 
@@ -140,6 +143,32 @@ class Base implements Arrayable
         $this->builder->where(...$args);
 
         return $this;
+    }
+
+    /**
+     * 
+     */
+    public function hasMany(string $className, string $identifier=null,string $on = null)
+    {
+        $identifier = $identifier?:'id';
+        $child = Container::make($className);
+        $relation_name = get_short_name($this);
+
+        $on = $on?:$relation_name.'_id';
+
+        return $this->{debug_backtrace()[1]['function']} = $child->where($on,$this->{$identifier})->all();
+    }
+
+    public function belongsTo(string $className, string $identifier=null, string $on = null)
+    {
+        
+        $identifier = $identifier?:'id';
+        $parent = Container::make($className);
+        $relation_name = get_short_name($parent);
+
+        $on = $on?:$relation_name.'_id';
+        
+        return $this->{debug_backtrace()[1]['function']} = $parent->where($identifier,$this->{$on})->get()->first();
     }
 
     /**
@@ -320,6 +349,17 @@ class Base implements Arrayable
         foreach ($pubFields as $name => $_) {
             if (in_array($name, $this->private)) {
                 unset($pubFields[$name]);
+            }
+            if($pubFields[$name] instanceof Arrayable){
+                $pubFields[$name] = $pubFields[$name]->toArray();
+            }
+
+            if($pubFields[$name] instanceof Traversable){
+                foreach($pubFields[$name] as $key => $field){
+                    if ($pubFields[$name][$key] instanceof Arrayable){
+                        $pubFields[$name][$key] = $field->toArray();
+                    }
+                }
             }
         }
         return $pubFields;
