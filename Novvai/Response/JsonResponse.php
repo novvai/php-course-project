@@ -10,14 +10,15 @@ class JsonResponse
     private $errors = [];
     private $success = [];
 
-    public function __construct()
+    public function __construct(int $code)
     {
         header("Content-Type:application/json");
+        http_response_code($code);
     }
 
-    public static function make()
+    public static function make(int $code = 200)
     {
-        return new static();
+        return new static($code);
     }
 
     public function payload(array $payload): self
@@ -34,7 +35,8 @@ class JsonResponse
 
     public function error(array $errors): self
     {
-        $this->errors = $errors;
+        $this->errors = $this->wrap($errors);
+        
         return $this;
     }
 
@@ -62,6 +64,15 @@ class JsonResponse
         });
 
         return $response;
+    }
+
+    private function wrap(array $data)
+    {
+        if (array_keys($data) !== range(0,count($data)-1)){
+            return [$data];
+        }
+
+        return $data;
     }
 
     private function normalize(array $data)

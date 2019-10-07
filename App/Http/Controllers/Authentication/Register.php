@@ -17,6 +17,7 @@ class Register extends Base
 
         $response = $authService->create($credentials);
         $jsonResponse = JsonResponse::make();
+
         if ($errors = $response->get('errors')){
             return $jsonResponse->error($errors);
         }

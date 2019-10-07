@@ -11,10 +11,10 @@ class AuthToken implements MiddlewareInterface{
     {
         $authToken = $request->headers()->get("x-li-tok");
         if(is_null($authToken)){
-            return JsonResponse::make()->error(['brada']);
+            return JsonResponse::make(403)->error(['brada']);
         }
         if(!Authenticator::make()->checkToken($authToken)){
-            return JsonResponse::make()->error(['brada^2']);
+            return JsonResponse::make(403)->error(['brada^2']);
         }
         return $next();
     }
