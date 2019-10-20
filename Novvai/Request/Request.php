@@ -7,6 +7,7 @@ class Request
     private static $instance = null;
 
     private $requestBag = [];
+    private $filesBag = [];
     private $headersInstance;
 
     public static function getInstance()
@@ -43,7 +44,7 @@ class Request
      * 
      * @return null|string|array
      */
-    public function get(string $key, $default=null)
+    public function get(string $key, $default = null)
     {
         if ($this->has($key)) {
             return $this->requestBag[$key];
@@ -61,24 +62,51 @@ class Request
         return $this->requestBag;
     }
 
+    /**
+     * Retrieves files that have been sent
+     * 
+     * @return array;
+     */
+    public function files()
+    {
+        return $this->filesBag;
+    }
+
     private function appendGETParams()
     {
         $this->requestBag = array_merge($this->requestBag, $_GET ?? []);
     }
 
 
-    private function appendPOSTParams()
+    private function appendPOSTParams(): void
     {
         $params = empty($_POST) ? json_decode(file_get_contents("php://input"), true) ?: [] : $_POST;
         $this->requestBag = array_merge($this->requestBag, $params);
     }
-    
+
+    private function processFiles(): void
+    {
+        
+        if (isset($_FILES['files'])) {
+            $filesCount = count(reset($_FILES['files']));
+            $file = [];
+            for ($i = 0; $i < $filesCount; $i++) {
+                foreach ($_FILES['files'] ?? [] as $type => $data) {
+                    $file[$type] = $data[$i];
+                }
+                $this->filesBag[] = $file;
+            }
+        }else if(!empty($_FILES)){
+            $this->filesBag[] = reset($_FILES);
+        }
+    }
     /**
      * Fill the request bag with GET and POST parameters
      */
-    private function buildRequestBag()
+    private function buildRequestBag(): void
     {
         $this->appendGETParams();
         $this->appendPOSTParams();
+        $this->processFiles();
     }
 }

@@ -12,8 +12,9 @@ class ShopsMigration extends Base
         $this->up('shops', function (QueryBuilderInterface $builder) {
             $builder->autoIncrement();
             $builder->addCollumn("title")->string(64)->notNull();
-            $builder->addCollumn("contact_phone")->string(16);
-            $builder->addCollumn("opened_time")->string(64)->notNull();
+            $builder->addCollumn("thumbnail")->string(64);
+            $builder->addCollumn("phone")->string(16);
+            $builder->addCollumn("work_time")->string(64)->notNull();
             $builder->addTimeStamps();
         });
     }

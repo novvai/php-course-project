@@ -5,6 +5,43 @@ if (!function_exists("base_path")) {
         return __DIR__ . DIRECTORY_SEPARATOR;
     }
 };
+if (!function_exists("public_path")) {
+    function public_path(): string
+    {
+        return base_path()."public".DIRECTORY_SEPARATOR;
+    }
+};
+if (!function_exists("config")) {
+    function config($dot_path)
+    {
+        $configs = glob(base_path() . 'config/*.php');
+        $components = explode(".",$dot_path);
+        if (!isset($components[0])){
+            return null;
+        }
+        $result = [];
+        
+        foreach($configs as $config){
+            $configName = pathinfo($config)["filename"];
+            if($configName==$components[0]){
+                $result = include($config);
+                unset($components[0]);
+                break;
+            }
+        }
+        foreach($components as $component){
+            if(isset($result[$component])){
+                $result = $result[$component];
+                continue;
+            }
+            $result = null;
+            break;
+        }
+
+        return $result;
+    }
+};
+
 
 if (!function_exists("dd")) {
     function dd(...$args): void
@@ -19,7 +56,7 @@ if (!function_exists("dd")) {
 if (!function_exists("generate_rand_string")) {
     function generate_rand_string($len = 64)
     {
-        $characters = '_-+*0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ';
+        $characters = '_0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ';
         $dictLen = strlen($characters);
         $randStr = "";
         for ($i=0; $i < $len; $i++) { 

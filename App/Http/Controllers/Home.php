@@ -2,7 +2,6 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\LoginToken;
 use App\Models\User;
 use Novvai\Container;
 use Novvai\Request\Request;
@@ -15,7 +14,6 @@ class Home extends Base
         $tok = Container::make(User::class);
         $users = $tok->get()->first();
         $tokens = $users->tokens()->first();
-        
         
         return JsonResponse::make()->payload(['tokens' => $tokens]);
     }

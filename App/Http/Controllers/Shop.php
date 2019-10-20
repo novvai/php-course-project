@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use Novvai\Container;
+use Novvai\Utilities\File;
 use App\Models\Shop as ShopModel;
 use Novvai\Response\JsonResponse;
 use Novvai\Model\Traits\Filterable;
@@ -10,11 +11,11 @@ use Novvai\Model\Traits\Filterable;
 class Shop extends Base
 {
     use Filterable;
-    
+
     public function index()
     {
         $shops = Container::make(ShopModel::class);
-        $this->handleFilters($shops, $this->request->get('filters',[]));
+        $this->handleFilters($shops, $this->request->get('filters', []));
 
         return JsonResponse::make()->payload([
             "shops" => $shops->all()
@@ -29,13 +30,29 @@ class Shop extends Base
     public function create()
     {
         $info = $this->request->all();
+
         $shopModel = Container::make(ShopModel::class);
         $shopModel->title = $info['title'];
-        $shopModel->contact_phone = $info['contact_phone'];
-        $shopModel->opened_time = $info['opened_time'];
-        $shop = $shopModel->create();
+        $shopModel->phone = $info['phone'];
+        $shopModel->work_time = $info['work_time'];
 
-        return JsonResponse::make()->payload([
+        if ($files = $this->request->files()) {
+            $file = reset($files);
+            $fileService = File::make($file);
+            $fileService->as(generate_rand_string(12))
+                ->to("uploads/img/")
+                ->save();
+            $shopModel->thumbnail =config("app.url").$fileService->getFilePath();
+        }
+        $shop = $shopModel->create();
+        
+        $response = JsonResponse::make();
+
+        if($shop->has("errors")){
+            return $response->errors($shop->get('errors'));
+        }
+
+        return $response->payload([
             "shop" => $shop
         ])->success([
             "code" => "200",

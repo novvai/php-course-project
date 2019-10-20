@@ -13,6 +13,7 @@ class JsonResponse
     public function __construct(int $code)
     {
         header("Content-Type:application/json");
+        header('Access-Control-Allow-Origin: *');
         $this->code($code);
     }
 

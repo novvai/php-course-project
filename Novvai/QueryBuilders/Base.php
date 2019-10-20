@@ -16,14 +16,14 @@ abstract class Base implements QueryBuilderInterface
 
     protected $hasOneColumn = false;
     protected $shouldUseTimeStamps = true;
-    
+
     /**
      * Main query parameters
      * 
      * @var string
      */
     protected $query = '';
-    
+
     /**
      * Additional query parameters like LIMIT and ORDER
      * 
@@ -80,7 +80,7 @@ abstract class Base implements QueryBuilderInterface
      * @param array $data
      * @param bool $creating
      */
-    protected function normalize(array $data, bool $creating = false):array
+    protected function normalize(array $data, bool $creating = false): array
     {
         $columns = array_keys($data);
         $values = array_values($data);
@@ -121,10 +121,10 @@ abstract class Base implements QueryBuilderInterface
      * 
      * @return array
      */
-    protected function typeNormalization(array $data) : array
+    protected function typeNormalization(array $data): array
     {
         return map($data, function ($item) {
-            return is_numeric($item) ? $item : "'".$this->sanitize($item)."'";
+            return is_numeric($item) ? $item : (is_null($item)?null:"'" . $this->sanitize($item) . "'");
         });
     }
 
@@ -132,9 +132,8 @@ abstract class Base implements QueryBuilderInterface
      * @param string
      * @return string
      */
-    protected function sanitize(string $string):string
+    protected function sanitize(string $string): string
     {
-        return str_replace("'","\'",$string);
-        // return $string;
+        return str_replace("'", "\'", $string);
     }
 }
