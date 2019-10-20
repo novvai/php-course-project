@@ -72,7 +72,7 @@ class Base implements Arrayable
     public function create($createInfo = null)
     {
         $createInfo = $createInfo ?: get_public_vars($this);
-
+        
         $this->builder->create($createInfo);
 
         /** @var void|array $dbResponse */

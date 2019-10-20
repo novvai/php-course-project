@@ -10,6 +10,7 @@ use Novvai\Model\Traits\Filterable;
 class Shop extends Base
 {
     use Filterable;
+    
     public function index()
     {
         $shops = Container::make(ShopModel::class);

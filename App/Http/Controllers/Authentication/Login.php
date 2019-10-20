@@ -15,18 +15,19 @@ class Login extends Base
     {
         $credentials = $this->request->all();
         $authUser = Authenticator::make()->attempt($credentials);
+        $jsonResponse = JsonResponse::make();
 
-        $response = JsonResponse::make();
         if (is_null($authUser)) {
-            return $response->error([
-                "code" => 4003,
-                "message" => "User Not Found"
-            ]);
+            return $jsonResponse->error([
+                    "code" => 4003,
+                    "message" => "Invalid username or password"
+                ]);
         }
 
-        return $response->payload(["user" => $authUser])->success([
-            "code" => 2002,
-            "message" => "Welcome, Authentication success"
-        ]);
+        return $jsonResponse->payload(["user" => $authUser])
+            ->success([
+                "code" => 2002,
+                "message" => "Welcome, Authentication success"
+            ]);
     }
 }

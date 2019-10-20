@@ -2,14 +2,17 @@
 
 namespace App\Http\Controllers\Authentication;
 
-use App\Models\User;
-use Novvai\Container;
 use App\Http\Controllers\Base;
 use App\Services\Authenticator;
 use Novvai\Response\JsonResponse;
 
 class Register extends Base
 {
+    /** 
+     * Attempts to register user with request data
+     * 
+     * @return JsonResponse;
+    */
     public function process()
     {
         $authService = Authenticator::make();

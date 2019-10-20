@@ -230,7 +230,7 @@ class PdoBuilder extends Base
     public function delete(array $identifiers): QueryBuilderInterface
     {
         $queryParams = map($identifiers, function ($item, $key) {
-            return "$key=" . (is_numeric($item) ? $item : "'$item'");
+            return "$key=" . (is_numeric($item) ? $item : "'".$this->sanitize($item)."'");
         });
 
         $queryParams = implode(' and ', $queryParams);
@@ -349,9 +349,9 @@ class PdoBuilder extends Base
 
         switch ($argCount) {
             case 2:
-                return "{$args[0]}=" . (is_numeric($args[1]) ? $args[1] : "'{$args[1]}'");
+                return "{$args[0]}=" . (is_numeric($args[1]) ? $args[1] : "'".$this->sanitize($args[1])."'");
             case 3:
-                return "{$args[0]}{$args[1]}" . (is_numeric($args[2]) ? $args[2] : "'{$args[2]}'");
+                return "{$args[0]}{$args[1]}" . (is_numeric($args[2]) ? $args[2] : "'".$this->sanitize($args[2])."'");
             default:
                 throw new InvalidArgumentException("Where clause needs 2 or 3 arguments, $argCount given", 9000);
         }

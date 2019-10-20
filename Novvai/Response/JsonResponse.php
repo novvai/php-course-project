@@ -13,7 +13,7 @@ class JsonResponse
     public function __construct(int $code)
     {
         header("Content-Type:application/json");
-        http_response_code($code);
+        $this->code($code);
     }
 
     public static function make(int $code = 200)
@@ -21,32 +21,70 @@ class JsonResponse
         return new static($code);
     }
 
+    /** 
+     * Sets Http Response code
+     * 
+     * @param int $code
+     * 
+     * @return self
+     */
+    public function code(int $code): self
+    {
+        http_response_code($code);
+        return $this;
+    }
+
+    /**
+     * Payload setter
+     *  
+     * @param array $payload
+     * 
+     * @return self
+     */
     public function payload(array $payload): self
     {
         $this->payload = $payload;
         return $this;
     }
 
+    /**
+     * Success setter
+     *  
+     * @param array $success
+     * 
+     * @return self
+     */
     public function success(array $success): self
     {
         $this->success = $success;
         return $this;
     }
 
+    /**
+     * Error setter
+     *  
+     * @param array $errors
+     * 
+     * @return self
+     */
     public function error(array $errors): self
     {
         $this->errors = $this->wrap($errors);
-        
+
         return $this;
     }
 
+    /**
+     * @inheridocs
+     * 
+     * @return string
+     */
     public function __toString()
     {
         return json_encode($this->buildResponse());
     }
 
     /**
-     * 
      * @return array
      */
     private function buildResponse(): array
@@ -66,9 +104,17 @@ class JsonResponse
         return $response;
     }
 
+    /**
+     * Checks if the $data is associative array 
+     * if it is wraps it in array
+     * 
+     * @param array $data
+     * 
+     * @return array
+     */
     private function wrap(array $data)
     {
-        if (array_keys($data) !== range(0,count($data)-1)){
+        if (array_keys($data) !== range(0, count($data) - 1)) {
             return [$data];
         }
 
@@ -77,8 +123,8 @@ class JsonResponse
 
     private function normalize(array $data)
     {
-        return map($data, function ($item) { 
-            if($item instanceof Arrayable){
+        return map($data, function ($item) {
+            if ($item instanceof Arrayable) {
                 return $item->toArray();
             }
             return $item;

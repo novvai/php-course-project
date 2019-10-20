@@ -124,7 +124,17 @@ abstract class Base implements QueryBuilderInterface
     protected function typeNormalization(array $data) : array
     {
         return map($data, function ($item) {
-            return is_numeric($item) ? $item : "'$item'";
+            return is_numeric($item) ? $item : "'".$this->sanitize($item)."'";
         });
+    }
+
+    /** 
+     * @param string
+     * @return string
+     */
+    protected function sanitize(string $string):string
+    {
+        return str_replace("'","\'",$string);
+        // return $string;
     }
 }

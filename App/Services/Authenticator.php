@@ -2,6 +2,7 @@
 
 namespace App\Services;
 
+use DateTime;
 use App\Models\User;
 use Novvai\Container;
 use Novvai\Stacks\Stack;
@@ -62,11 +63,21 @@ class Authenticator
 
         return null;
     }
-
-    public function checkToken(string $token)
+    
+    /** 
+     * @param string $token
+     * 
+     * @return bool
+     */
+    public function guard(string $token): bool
     {
         $token = $this->tokenModel->where('token', $token)->get()->first();
-        return !is_null($token);
+
+        if (is_null($token)) {
+            return false;
+        }
+
+        return $this->isTokenValid($token);
     }
 
     /**
@@ -100,6 +111,19 @@ class Authenticator
         }
 
         return true;
+    }
+
+    /**
+     * @param LoginToken $token
+     * 
+     * @return bool
+     */
+    private function isTokenValid(LoginToken $token): bool
+    {
+        $currentDate = new DateTime();
+        $tokenExpireDate = new DateTime($token->expires_at);
+
+        return ($currentDate < $tokenExpireDate);
     }
 
     /**
