@@ -5,6 +5,13 @@ if (!function_exists("base_path")) {
         return __DIR__ . DIRECTORY_SEPARATOR;
     }
 };
+
+if (!function_exists("load_template")) {
+    function load_template($template): string
+    {
+        return base_path()."templates/$template.novvai.php";
+    }
+};
 if (!function_exists("public_path")) {
     function public_path(): string
     {

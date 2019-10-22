@@ -21,6 +21,9 @@ DBDriver::setConfigPath(base_path() . '/config/db.php');
 MiddlewareManager::register([
     "auth" => [
         App\Middlewares\AuthToken::class
+    ],
+    "session"=>[
+        App\Middlewares\Session::class
     ]
 ]);
 

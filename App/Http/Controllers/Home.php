@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Shop;
 use App\Models\User;
 use Novvai\Container;
 use Novvai\Request\Request;
@@ -11,11 +12,10 @@ class Home extends Base
 {
     public function index()
     {
-        $tok = Container::make(User::class);
-        $users = $tok->get()->first();
-        $tokens = $users->tokens()->first();
+        $shops = Container::make(Shop::class);
+        $shops = $shops->all();
         
-        return JsonResponse::make()->payload(['tokens' => $tokens]);
+        return include_once load_template('home/index');
     }
 
     public function show($user_id)

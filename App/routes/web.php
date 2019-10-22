@@ -1,8 +1,10 @@
 <?php
 
 use Novvai\Router\Router;
-Router::get("/", "App\\Http\\Controllers\\Home@index");
-Router::get("/user/{user_id}", "App\\Http\\Controllers\\Home@show");
+Router::middlewareGroup("session", function () {
+    Router::get("/", "App\\Http\\Controllers\\Home@index");
+    Router::get("/user/{user_id}", "App\\Http\\Controllers\\Home@show");
+});
 Router::get('/api/shops', "App\\Http\\Controllers\\Shop@index");
 
 Router::post("/api/authenticate", "App\\Http\\Controllers\\Authentication\\Login@process");
