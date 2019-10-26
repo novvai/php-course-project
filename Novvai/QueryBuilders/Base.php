@@ -89,7 +89,7 @@ abstract class Base implements QueryBuilderInterface
 
         $values = $this->typeNormalization($values);
 
-        return [implode(",", $columns), implode(",", $values)];
+        return [$columns, $values];
     }
 
     /**

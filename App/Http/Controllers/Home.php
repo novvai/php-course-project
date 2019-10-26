@@ -12,10 +12,7 @@ class Home extends Base
 {
     public function index()
     {
-        $shops = Container::make(Shop::class);
-        $shops = $shops->all();
-        
-        return include_once load_template('home/index');
+       header("location: /dashboard");
     }
 
     public function show($user_id)

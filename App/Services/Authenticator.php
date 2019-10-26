@@ -49,9 +49,7 @@ class Authenticator
      */
     public function attempt(array $cred)
     {
-
-
-        $response = $this->userModel->where("email", $cred['username'])->get()->first();
+        $response = $this->userModel->where("email", $cred['username'])->select(["password","id"])->get()->first();
 
         if (is_null($response)) {
             return null;
@@ -137,6 +135,7 @@ class Authenticator
         $this->tokenModel->token = generate_rand_string(60);
         $this->tokenModel->user_id = $user->id;
         $this->tokenModel->create();
+
         return $this->tokenModel;
     }
 }

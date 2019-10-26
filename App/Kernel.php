@@ -45,7 +45,8 @@ class Kernel
 
     private function getRequestedRoute()
     {
-        $method = $_SERVER['REQUEST_METHOD'];
+        $method = isset($_REQUEST['_method'])?$_REQUEST['_method']:$_SERVER['REQUEST_METHOD'];
+
         $path = explode('?', $_SERVER['REQUEST_URI'])[0];
 
         return $this->router()->getRequestedRoute($method, $path);

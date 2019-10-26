@@ -24,6 +24,9 @@ MiddlewareManager::register([
     ],
     "session"=>[
         App\Middlewares\Session::class
+    ],
+    "guest"=>[
+        App\Middlewares\Guest::class
     ]
 ]);
 

@@ -22,7 +22,8 @@ class Base implements Arrayable
      */
     protected $private = [];
 
-    
+    protected $uniqueIdentifier = "id";
+
 
     protected $disableTimeStamps = false;
 
@@ -61,6 +62,24 @@ class Base implements Arrayable
         return $this;
     }
 
+     /**
+     * Attempts to update record from given data,
+     * or data that is stored on the initialized model
+     * 
+     * @param mixed $updateInfo
+     * 
+     * @return Stackable
+     */
+    public function update($updateInfo = null)
+    {
+        // ["username"=>1]
+        $identifier = [$this->uniqueIdentifier => $this->{$this->uniqueIdentifier}];
+
+        $this->builder->update($identifier, $updateInfo);
+
+        return $this->dbWrite($updateInfo);
+    }
+
     /**
      * Attempts to create record from given data,
      * or data that is stored on the initialized model
@@ -72,9 +91,21 @@ class Base implements Arrayable
     public function create($createInfo = null)
     {
         $createInfo = $createInfo ?: get_public_vars($this);
-        
+
         $this->builder->create($createInfo);
 
+        return $this->dbWrite($createInfo);
+    }
+
+    /**
+     * Initialize execution of Write to db
+     * 
+     * @param array $data
+     * 
+     * @return Stackable
+     */
+    private function dbWrite($data)
+    {
         /** @var void|array $dbResponse */
         $dbResponse = $this->connection->execute($this->builder->getQuery());
 
@@ -82,7 +113,7 @@ class Base implements Arrayable
             return $this->handleError($dbResponse);
         }
 
-        return $this->wrap([$createInfo]);
+        return $this->wrap([$data]);
     }
 
     /**
@@ -101,6 +132,18 @@ class Base implements Arrayable
         return $this->connection->execute($this->builder->getQuery());
     }
 
+    /**
+     * Changes what fields are retrieved
+     * 
+     * @param array $fields
+     * 
+     * @return self
+     */
+    public function select(array $fields): Base
+    {
+        $this->retrievable = $fields;
+        return $this;
+    }
     /**
      * @return Novvai\Stacks\Stack
      */
@@ -148,27 +191,27 @@ class Base implements Arrayable
     /**
      * 
      */
-    public function hasMany(string $className, string $identifier=null,string $on = null)
+    public function hasMany(string $className, string $identifier = null, string $on = null)
     {
-        $identifier = $identifier?:'id';
+        $identifier = $identifier ?: 'id';
         $child = Container::make($className);
         $relation_name = get_short_name($this);
 
-        $on = $on?:$relation_name.'_id';
+        $on = $on ?: $relation_name . '_id';
 
-        return $this->{debug_backtrace()[1]['function']} = $child->where($on,$this->{$identifier})->all();
+        return $this->{debug_backtrace()[1]['function']} = $child->where($on, $this->{$identifier})->all();
     }
 
-    public function belongsTo(string $className, string $identifier=null, string $on = null)
+    public function belongsTo(string $className, string $identifier = null, string $on = null)
     {
-        
-        $identifier = $identifier?:'id';
+
+        $identifier = $identifier ?: 'id';
         $parent = Container::make($className);
         $relation_name = get_short_name($parent);
 
-        $on = $on?:$relation_name.'_id';
-        
-        return $this->{debug_backtrace()[1]['function']} = $parent->where($identifier,$this->{$on})->get()->first();
+        $on = $on ?: $relation_name . '_id';
+
+        return $this->{debug_backtrace()[1]['function']} = $parent->where($identifier, $this->{$on})->get()->first();
     }
 
     /**
@@ -350,13 +393,13 @@ class Base implements Arrayable
             if (in_array($name, $this->private)) {
                 unset($pubFields[$name]);
             }
-            if($pubFields[$name] instanceof Arrayable){
+            if ($pubFields[$name] instanceof Arrayable) {
                 $pubFields[$name] = $pubFields[$name]->toArray();
             }
 
-            if($pubFields[$name] instanceof Traversable){
-                foreach($pubFields[$name] as $key => $field){
-                    if ($pubFields[$name][$key] instanceof Arrayable){
+            if ($pubFields[$name] instanceof Traversable) {
+                foreach ($pubFields[$name] as $key => $field) {
+                    if ($pubFields[$name][$key] instanceof Arrayable) {
                         $pubFields[$name][$key] = $field->toArray();
                     }
                 }

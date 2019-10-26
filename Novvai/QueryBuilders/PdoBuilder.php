@@ -162,7 +162,7 @@ class PdoBuilder extends Base
     public function indexed(array $collumns): QueryBuilderInterface
     {
         $this->next();
-        $this->query .= " INDEX (".implode(',',$collumns).") ";
+        $this->query .= " INDEX (" . implode(',', $collumns) . ") ";
 
         return $this;
     }
@@ -215,8 +215,35 @@ class PdoBuilder extends Base
     public function create(array $createInfo): QueryBuilderInterface
     {
         list($columns, $values) = $this->normalize($createInfo, true);
+        
+        $columns = implode(",", $columns);
+        $values = implode(",", $values);
 
         $this->query = "INSERT INTO {$this->tableName} ({$columns}) VALUES ($values)";
+
+        return $this;
+    }
+
+    /**
+     * Query that update record to given DB
+     * 
+     * @param array $updateInfo
+     * 
+     * @return self
+     */
+    public function update($identifier, array $updateInfo): QueryBuilderInterface
+    {
+        list($columns, $values) = $this->normalize($updateInfo);
+        $setter = [];
+        foreach($columns as $index => $column){
+            $setter[] = "{$column}={$values[$index]}"; 
+        }
+
+        $identifierKey = array_keys($identifier)[0];
+        $identifierValue = $this->sanitize(reset($identifier));
+        $setterString = implode(',',$setter);
+
+        $this->query = "UPDATE {$this->tableName} SET  {$setterString} WHERE {$identifierKey}={$identifierValue}";
 
         return $this;
     }
@@ -230,7 +257,7 @@ class PdoBuilder extends Base
     public function delete(array $identifiers): QueryBuilderInterface
     {
         $queryParams = map($identifiers, function ($item, $key) {
-            return "$key=" . (is_numeric($item) ? $item : "'".$this->sanitize($item)."'");
+            return "$key=" . (is_numeric($item) ? $item : "'" . $this->sanitize($item) . "'");
         });
 
         $queryParams = implode(' and ', $queryParams);
@@ -349,9 +376,9 @@ class PdoBuilder extends Base
 
         switch ($argCount) {
             case 2:
-                return "{$args[0]}=" . (is_numeric($args[1]) ? $args[1] : "'".$this->sanitize($args[1])."'");
+                return "{$args[0]}=" . (is_numeric($args[1]) ? $args[1] : "'" . $this->sanitize($args[1]) . "'");
             case 3:
-                return "{$args[0]}{$args[1]}" . (is_numeric($args[2]) ? $args[2] : "'".$this->sanitize($args[2])."'");
+                return "{$args[0]}{$args[1]}" . (is_numeric($args[2]) ? $args[2] : "'" . $this->sanitize($args[2]) . "'");
             default:
                 throw new InvalidArgumentException("Where clause needs 2 or 3 arguments, $argCount given", 9000);
         }

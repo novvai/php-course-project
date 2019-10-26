@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Controllers\Authentication;
+namespace App\Http\Controllers\Api\Authentication;
 
 use App\Http\Controllers\Base;
 use App\Services\Authenticator;
