@@ -2,7 +2,7 @@
 
 namespace Novvai\Utilities\Validator;
 
-class Validator
+abstract class Validator
 {
     /**
      * Currentry validation key in the data set
@@ -15,7 +15,8 @@ class Validator
      * @var Array<string>
      */
     private $patterns = [
-        "email" => "/^[_a-z0-9-]+(\.[_a-z0-9-]+)*@[a-z0-9-]+(\.[a-z0-9-]+)*(\.[a-z]{2,})$/i"
+        "email" => "/^[_a-z0-9-]+(\.[_a-z0-9-]+)*@[a-z0-9-]+(\.[a-z0-9-]+)*(\.[a-z]{2,})$/i",
+        "phone" => "/(\+)?(359|0)8[789]\d{1}(|-| )\d{3}(|-| )\d{3}/",
     ];
 
     /**
@@ -31,8 +32,10 @@ class Validator
     public function __construct(array $data)
     {
         $this->context = $data;
+        $this->handle();
     }
 
+    abstract protected function handle();
     /**
      * @param string $key
      * @param array $rules
@@ -44,6 +47,11 @@ class Validator
         $this->currentKey = $key;
 
         foreach ($rules as $rule => $arguments) {
+            if (is_numeric($rule)){
+                $this->{$arguments}($this->context[$key]); 
+                continue;   
+            }
+
             $this->{$rule}($this->context[$key], $arguments);
         }
 
@@ -82,7 +90,7 @@ class Validator
             ];
         }
     }
-
+   
     /**
      * @param string $ctx
      * @param array $patterns
@@ -102,4 +110,22 @@ class Validator
             }
         }
     }
+     /**
+     * @param string $ctx
+     * @param int $minNumber
+     * 
+     * @return void
+     */
+    private function required($ctx)
+    {
+        $invalid = is_null($ctx) || empty($ctx) || $ctx == "";
+        if ($invalid) {
+            $this->errors['errors'][] = [
+                "field" => $this->currentKey,
+                "code" => 9002,
+                "message" => "$this->currentKey is required"
+            ];
+        }
+    }
+
 }

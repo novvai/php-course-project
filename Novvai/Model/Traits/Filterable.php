@@ -9,7 +9,6 @@ use Novvai\Model\Base as BaseModel;
  */
 trait Filterable
 {
-
     private function handleFilters(BaseModel $model, $filters = [])
     {
         if (array_key_exists('offset', $filters)) {

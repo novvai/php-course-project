@@ -12,26 +12,32 @@ if($args[0]!="--action"){
     return;
 }
 $command = "";
-$migrations = glob(base_path() . 'Migrations/*.php');
+
 
 switch($args[1]){
     case 'up':
         $command = 'handle';
+        $files = glob(base_path() . 'Migrations/*.php');
+        break;
+    case 'seed':
+        $command = 'handle';
+        $files = glob(base_path() . 'Seeds/*.php');
         break;
     case 'rollback':
         // Rolling migrations back should actually execute the handler in reverse order
-        $migrations = array_reverse($migrations);
+        $files = glob(base_path() . 'Migrations/*.php');
+        $files = array_reverse($files);
         $command = 'rollback';
         break;
     default:
         return "";
 }
 
-foreach ($migrations as $migration) {
-    require_once $migration;
-    $migrationClassName = end(get_declared_classes());
+foreach ($files as $file) {
+    require_once $file;
+    $fileClassName = end(get_declared_classes());
     
-    Container::make($migrationClassName)->$command();
+    Container::make($fileClassName)->$command();
 
-    echo "$migrationClassName $args[1]! \n";
+    echo "$fileClassName $args[1]! \n";
 }

@@ -5,10 +5,10 @@ namespace App\Middlewares;
 use Novvai\Middlewares\Interfaces\MiddlewareInterface;
 use Novvai\Response\Response;
 
-class Guest implements MiddlewareInterface
+class WebAuth implements MiddlewareInterface
 {
     public function handle($request, callable $next)
     {
-        return isset($_SESSION["user_session"]) ? Response::redirect('dashboard') : $next();
+        return (!isset($_SESSION["user_session"])) ? Response::redirect('login') : $next();
     }
 }

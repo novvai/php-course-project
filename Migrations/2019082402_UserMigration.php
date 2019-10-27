@@ -14,9 +14,12 @@ class UserMigration extends Base
             $builder->addCollumn("username")->string(64)->notNull();
             $builder->addCollumn("email")->string(64)->notNull();
             $builder->addCollumn("password")->string(255)->notNull();
+            $builder->addCollumn("role_id")->integer(11)->notNull();
 
             $builder->addTimeStamps();
             $builder->unique('email');
+
+            $builder->foreignCascade("role_id", "roles", "id");
         });
     }
 

@@ -38,7 +38,7 @@ class Response
      */
     public static function redirect(string $to)
     {
-        header("location: ".config("app.url") . "/" . $to);
+        header("location: ".config("app.url") . $to);
         exit();
     }
 

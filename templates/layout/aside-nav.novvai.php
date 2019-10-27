@@ -34,10 +34,45 @@
                 <p>Табло</p>
               </a>
           </li>
+          <li class="nav-item has-treeview">
+            <a href="#" class="nav-link">
+              <i class="nav-icon fas fa-dolly"></i>
+              <p>
+                Продукти
+                <i class="right fas fa-angle-left"></i>
+              </p>
+            </a>
+            <ul class="nav nav-treeview" style="display: none;">
+              <li class="nav-item">
+                <a href="/product-categories" class="nav-link">
+                  <i class="far fa-circle nav-icon"></i>
+                  <p>Категории</p>
+                </a>
+              </li>
+              <li class="nav-item">
+                <a href="/products" class="nav-link">
+                  <i class="far fa-circle nav-icon"></i>
+                  <p>Артикули</p>
+                </a>
+              </li>
+            </ul>
+          </li>
+          <li class="nav-item">
+              <a href="/posts" class="nav-link">
+                <i class="nav-icon fas fa-book"></i>
+                <p>Блог</p>
+              </a>
+          </li>
           <li class="nav-item">
               <a href="/shops" class="nav-link">
                 <i class="nav-icon fas fa-store-alt"></i>
                 <p>Магазини</p>
+              </a>
+          </li>
+          <li class="nav-item">
+              <a href="/logout" class="nav-link">
+                <i class="nav-icon fas fa-sign-out-alt"></i>
+                <p>Изход</p>
               </a>
           </li>
         </ul>

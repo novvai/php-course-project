@@ -19,6 +19,33 @@ class PdoBuilder extends Base
 
     /**
      * Creates Query string fetching all entries from give Table
+     * when given column is Null
+     * 
+     * @return string
+     */
+    public function whereIsNull(string $column): QueryBuilderInterface
+    {
+        $this->query .= " WHERE $column IS NULL";
+
+        return $this;
+    }
+
+    /**
+     * Creates Query string sorting records from given Table
+     * 
+     * @param string $column
+     * @param string $direction
+     * 
+     * @return string
+     */
+    public function sortBy(string $column, string $direction = "ASC"): QueryBuilderInterface
+    {
+        $this->query .= " ORDER BY $column $direction";
+
+        return $this;
+    }
+    /**
+     * Creates Query string fetching all entries from give Table
      * by given single constraint
      * 
      * @return string
@@ -204,6 +231,14 @@ class PdoBuilder extends Base
         $this->query .= " FLOAT ($max, $points) ";
         return $this;
     }
+    /**
+     * @return self
+     */
+    public function boolean(): QueryBuilderInterface
+    {
+        $this->query .= " BOOLEAN ";
+        return $this;
+    }
 
     /**
      * Query that adds record to given DB
@@ -215,7 +250,7 @@ class PdoBuilder extends Base
     public function create(array $createInfo): QueryBuilderInterface
     {
         list($columns, $values) = $this->normalize($createInfo, true);
-        
+
         $columns = implode(",", $columns);
         $values = implode(",", $values);
 
@@ -235,13 +270,13 @@ class PdoBuilder extends Base
     {
         list($columns, $values) = $this->normalize($updateInfo);
         $setter = [];
-        foreach($columns as $index => $column){
-            $setter[] = "{$column}={$values[$index]}"; 
+        foreach ($columns as $index => $column) {
+            $setter[] = "{$column}={$values[$index]}";
         }
 
         $identifierKey = array_keys($identifier)[0];
         $identifierValue = $this->sanitize(reset($identifier));
-        $setterString = implode(',',$setter);
+        $setterString = implode(',', $setter);
 
         $this->query = "UPDATE {$this->tableName} SET  {$setterString} WHERE {$identifierKey}={$identifierValue}";
 
@@ -257,11 +292,11 @@ class PdoBuilder extends Base
     public function delete(array $identifiers): QueryBuilderInterface
     {
         $queryParams = map($identifiers, function ($item, $key) {
-            return "$key=" . (is_numeric($item) ? $item : "'" . $this->sanitize($item) . "'");
+            return "$key" . (is_numeric($item) ? "=$item" : (is_null($item) ? " is null" : "='" . $this->sanitize($item) . "'"));
         });
-
         $queryParams = implode(' and ', $queryParams);
         $this->query = "DELETE FROM {$this->tableName} WHERE $queryParams";
+
         return $this;
     }
 

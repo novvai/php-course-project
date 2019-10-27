@@ -10,6 +10,8 @@ interface QueryBuilderInterface
     public function where(...$args): QueryBuilderInterface;
     public function orWhere(...$args): QueryBuilderInterface;
     public function andWhere(...$args): QueryBuilderInterface;
+    public function whereIsNull(string $column): QueryBuilderInterface;
+    public function sortBy(string $column, string $direction = "ASC"): QueryBuilderInterface;
 
     /**
      * DB creation
@@ -17,13 +19,15 @@ interface QueryBuilderInterface
      */
     public function text(): QueryBuilderInterface;
     public function unique(): QueryBuilderInterface;
+    public function boolean(): QueryBuilderInterface;
     public function notNull(): QueryBuilderInterface;
     public function addTimeStamps(): QueryBuilderInterface;
     public function addSoftDelete(): QueryBuilderInterface;
     public function string(int $max): QueryBuilderInterface;
     public function integer(int $max): QueryBuilderInterface;
     public function float($max, $points): QueryBuilderInterface;
-    public function default($defaultValue): QueryBuilderInterface;
+    public function
+    default($defaultValue): QueryBuilderInterface;
     public function decimal($max, $points): QueryBuilderInterface;
     public function indexed(array $collumns): QueryBuilderInterface;
     public function autoIncrement(string $name = "id"): QueryBuilderInterface;

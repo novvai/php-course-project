@@ -86,8 +86,7 @@ class Request
 
     private function processFiles(): void
     {
-        
-        if (isset($_FILES['files'])) {
+        if (isset($_FILES['files']) && $_FILES['files']["error"]!=4) {
             $filesCount = count(reset($_FILES['files']));
             $file = [];
             for ($i = 0; $i < $filesCount; $i++) {
@@ -96,8 +95,11 @@ class Request
                 }
                 $this->filesBag[] = $file;
             }
-        }else if(!empty($_FILES)){
-            $this->filesBag[] = reset($_FILES);
+            return;
+        }
+        $file = reset($_FILES);
+        if(!empty($file) && !empty($file['tmp_name'])){
+            $this->filesBag[] = $file;
         }
     }
     /**

@@ -62,7 +62,7 @@ class Base implements Arrayable
         return $this;
     }
 
-     /**
+    /**
      * Attempts to update record from given data,
      * or data that is stored on the initialized model
      * 
@@ -74,6 +74,7 @@ class Base implements Arrayable
     {
         // ["username"=>1]
         $identifier = [$this->uniqueIdentifier => $this->{$this->uniqueIdentifier}];
+        $updateInfo = $updateInfo ?: get_public_vars($this);
 
         $this->builder->update($identifier, $updateInfo);
 
@@ -150,6 +151,29 @@ class Base implements Arrayable
     public function all(): Stackable
     {
         return $this->get();
+    }
+
+    /**
+     * @param array $args
+     * 
+     * @return self
+     */
+    public function whereIsNull($column): Base
+    {
+        $this->builder->whereIsNull($column);
+
+        return $this;
+    }
+    /**
+     * @param array $args
+     * 
+     * @return self
+     */
+    public function sortBy($column, $direction): Base
+    {
+        $this->builder->sortBy($column, $direction);
+
+        return $this;
     }
 
     /**

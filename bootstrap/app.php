@@ -27,6 +27,10 @@ MiddlewareManager::register([
     ],
     "guest"=>[
         App\Middlewares\Guest::class
+    ],
+    "web-auth"=>[
+        App\Middlewares\WebAuth::class,
+        App\Middlewares\Permissions::class,
     ]
 ]);
 
