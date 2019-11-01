@@ -52,8 +52,36 @@ class PdoBuilder extends Base
      */
     public function where(...$args): QueryBuilderInterface
     {
-        $this->query .= " WHERE ";
+        $this->query .= (strpos($this->query, 'WHERE') === false) ? " WHERE " : " AND ";
         $this->query .= $this->getConstraintFormatted($args);
+
+        return $this;
+    }
+
+    /**
+     * Creates Query string fetching all entries from give Table
+     * by given LIKE constraint
+     * 
+     * @return string
+     */
+    public function whereLike($column, $value): QueryBuilderInterface
+    {
+        $this->query .= (strpos($this->query, 'WHERE') === false) ? " WHERE " : " AND ";
+        $this->query .= "$column LIKE '{$this->sanitize($value)}' ";
+
+        return $this;
+    }
+
+    /**
+     * Creates Query string fetching all entries from give Table
+     * by given LIKE constraint
+     * 
+     * @return string
+     */
+    public function whereLikeFuzzy($column, $value): QueryBuilderInterface
+    {
+        $this->query .= (strpos($this->query, 'WHERE') === false) ? " WHERE " : " AND ";
+        $this->query .= "$column LIKE '%$this->sanitize($value)%' ";
 
         return $this;
     }
@@ -386,6 +414,18 @@ class PdoBuilder extends Base
     public function getQuery(): string
     {
         return $this->query;
+    }
+
+    /**
+     * Sets the querystring to nothing ready for new query
+     * 
+     * @return QueryBuilderInterface
+     */
+    public function unsetQuery(): QueryBuilderInterface
+    {
+        $this->query = "";
+        
+        return $this;
     }
 
     /**

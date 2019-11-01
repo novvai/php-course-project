@@ -73,4 +73,12 @@ abstract class Base
 
         return $path;
     }
+
+    /**
+     * 
+     */
+    protected function sortBy($direction)
+    {
+        $this->modelInstance->sortBy('updated_at', $direction);
+    }
 }

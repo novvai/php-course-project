@@ -4,10 +4,10 @@ namespace App\Http\Controllers\Web;
 
 use Novvai\Response\Response;
 use App\Http\Controllers\Base;
+use Novvai\Response\JsonResponse;
 use App\Repositories\CategoryRepository;
 use App\Validators\CategoryRequestValidator;
-use Novvai\Response\JsonResponse;
-use Novvai\Utilities\Validator\Validator;
+use Novvai\Utilities\Translations\ErrorTranslator;
 
 class ProductCategories extends Base
 {
@@ -45,7 +45,9 @@ class ProductCategories extends Base
         $validation = new CategoryRequestValidator($data);
 
         if ($validation->failed()) {
-            return  Response::make()->withErrors($validation->errors())->withInputs($data)->back();
+            return  Response::make()
+                ->withErrors(ErrorTranslator::map($validation->errors()))
+                ->withInputs($data)->back();
         }
 
         (new CategoryRepository())->create($data);
@@ -62,7 +64,9 @@ class ProductCategories extends Base
         $validation = new CategoryRequestValidator($data);
 
         if ($validation->failed()) {
-            return  Response::make()->withErrors($validation->errors())->withInputs($data)->back();
+            return  Response::make()
+                ->withErrors(ErrorTranslator::map($validation->errors()))
+                ->withInputs($data)->back();
         }
 
         (new CategoryRepository())->updateById($cat_id, $data);

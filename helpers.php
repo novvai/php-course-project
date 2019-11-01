@@ -5,39 +5,63 @@ if (!function_exists("base_path")) {
         return __DIR__ . DIRECTORY_SEPARATOR;
     }
 };
+if (!function_exists("session")) {
+    function session()
+    {
+        return Novvai\Session::make();
+    }
+}
+if (!function_exists("renderErr")) {
+    function renderErr($arr)
+    {
+        foreach ($arr ?? [] as $err) {
+            echo "<p class='text-danger'>{$err['message']}</p>";
+        }
+    }
+}
+
+
+if (!function_exists("log_string")) {
+    function log_string($str)
+    {
+        $file = fopen(base_path() . "storage/log.txt", "a");
+        fwrite($file, $str);
+        fclose($file);
+    }
+}
 
 if (!function_exists("load_template")) {
     function load_template($template): string
     {
-        return base_path()."templates/$template.novvai.php";
+        return base_path() . "templates/$template.novvai.php";
     }
 };
 if (!function_exists("public_path")) {
     function public_path(): string
     {
-        return base_path()."public".DIRECTORY_SEPARATOR;
+        return base_path() . "public" . DIRECTORY_SEPARATOR;
     }
 };
 if (!function_exists("config")) {
     function config($dot_path)
     {
         $configs = glob(base_path() . 'config/*.php');
-        $components = explode(".",$dot_path);
-        if (!isset($components[0])){
+        $components = explode(".", $dot_path);
+        if (!isset($components[0])) {
             return null;
         }
         $result = [];
-        
-        foreach($configs as $config){
+
+        foreach ($configs as $config) {
             $configName = pathinfo($config)["filename"];
-            if($configName==$components[0]){
+            if ($configName == $components[0]) {
                 $result = include($config);
                 unset($components[0]);
                 break;
             }
         }
-        foreach($components as $component){
-            if(isset($result[$component])){
+        foreach ($components as $component) {
+            if (isset($result[$component])) {
                 $result = $result[$component];
                 continue;
             }
@@ -66,9 +90,9 @@ if (!function_exists("generate_rand_string")) {
         $characters = '_0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ';
         $dictLen = strlen($characters);
         $randStr = "";
-        for ($i=0; $i < $len; $i++) { 
-            $randStr .= $characters[rand(0,$dictLen)];
-        } 
+        for ($i = 0; $i < $len; $i++) {
+            $randStr .= $characters[rand(0, $dictLen)];
+        }
 
         return $randStr;
     }

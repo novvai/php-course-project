@@ -33,5 +33,6 @@
 <script src="<?=config('app.url')?>/assets/dist/js/adminlte.js"></script>
 <script src="<?=config('app.url')?>/assets/plugins/summernote/summernote-bs4.js"></script>
 
+<script src="<?=config('app.url')?>/assets/js/main.js"></script>
 </body>
 </html>

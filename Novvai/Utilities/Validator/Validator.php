@@ -47,9 +47,9 @@ abstract class Validator
         $this->currentKey = $key;
 
         foreach ($rules as $rule => $arguments) {
-            if (is_numeric($rule)){
-                $this->{$arguments}($this->context[$key]); 
-                continue;   
+            if (is_numeric($rule)) {
+                $this->{$arguments}($this->context[$key]);
+                continue;
             }
 
             $this->{$rule}($this->context[$key], $arguments);
@@ -68,29 +68,55 @@ abstract class Validator
         return (bool) (count($this->errors) > 0);
     }
 
-    public function errors()
+    /**
+     * @return array
+     */
+    public function errors(): array
     {
-        return $this->errors;
+        return reset($this->errors);
     }
 
     /**
-     * @param string $ctx
+     * @param mixed $ctx
      * @param int $minNumber
      * 
      * @return void
      */
-    private function min(string $ctx, int $minNumber)
+    private function min($ctx, $minNumber)
     {
-        $valid = strlen($ctx) > $minNumber;
-        if (!$valid) {
-            $this->errors['errors'][] = [
-                "field" => $this->currentKey,
-                "code" => 9000,
-                "message" => "Input should be minimum : $minNumber"
+        $errorCode = 9001;
+        if (!is_numeric($ctx)) {
+            $ctx = strlen($ctx);
+            $errorCode = 9002;
+        }
+        if (!($ctx >= $minNumber)) {
+            $this->errors['errors'][$this->currentKey][] = [
+                "code" => $errorCode,
+                "criterion" => $minNumber
             ];
         }
     }
-   
+    /**
+     * @param mixed $ctx
+     * @param int $maxNumber
+     * 
+     * @return void
+     */
+    private function max($ctx, $maxValue)
+    {
+        $errorCode = 9003;
+        if (!is_numeric($ctx)) {
+            $ctx = strlen($ctx);
+            $errorCode = 9004;
+        }
+        if (!($ctx <= $maxValue)) {
+            $this->errors['errors'][$this->currentKey][] = [
+                "code" => $errorCode,
+                "criterion" => $maxValue
+            ];
+        }
+    }
+
     /**
      * @param string $ctx
      * @param array $patterns
@@ -102,15 +128,15 @@ abstract class Validator
         foreach ($patterns as $pattern) {
             $valid = preg_match($this->patterns[$pattern], $ctx);
             if (!$valid) {
-                $this->errors['errors'][] = [
-                    "field" => $this->currentKey,
-                    "code" => 9001,
-                    "message" => "Invalid $pattern"
+                $this->errors['errors'][$this->currentKey][] = [
+                    "code" => 9005,
+                    "criterion" => $pattern
                 ];
             }
         }
     }
-     /**
+
+    /**
      * @param string $ctx
      * @param int $minNumber
      * 
@@ -120,12 +146,10 @@ abstract class Validator
     {
         $invalid = is_null($ctx) || empty($ctx) || $ctx == "";
         if ($invalid) {
-            $this->errors['errors'][] = [
-                "field" => $this->currentKey,
-                "code" => 9002,
-                "message" => "$this->currentKey is required"
+            $this->errors['errors'][$this->currentKey][] = [
+                "code" => 9006,
+                "criterion" => $this->currentKey
             ];
         }
     }
-
 }

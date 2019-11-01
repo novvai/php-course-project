@@ -6,6 +6,7 @@ use App\Http\Controllers\Base;
 use App\Repositories\PostRepository;
 use App\Validators\PostRequestValidation;
 use Novvai\Response\Response;
+use Novvai\Utilities\Translations\ErrorTranslator;
 
 class Posts extends Base
 {
@@ -24,7 +25,7 @@ class Posts extends Base
      */
     public function view($id)
     {
-        Response::withTemplate("posts/detail", ["post" => ( new PostRepository())->findById($id)]);
+        Response::withTemplate("posts/detail", ["post" => (new PostRepository())->findById($id)]);
     }
 
     /**
@@ -44,9 +45,12 @@ class Posts extends Base
         $data['files'] = $this->request->files();
 
         $validation = new PostRequestValidation($data);
+        $validation->validate('files', ['required']);
 
         if ($validation->failed()) {
-            return  Response::make()->withErrors($validation->errors())->withInputs($data)->back();
+            return  Response::make()
+                ->withErrors(ErrorTranslator::map($validation->errors()))
+                ->withInputs($data)->back();
         }
 
         $postRepo = new PostRepository();
@@ -77,7 +81,9 @@ class Posts extends Base
         $validation = new PostRequestValidation($data);
 
         if ($validation->failed()) {
-            return  Response::make()->withErrors($validation->errors())->withInputs($data)->back();
+            return  Response::make()
+                ->withErrors(ErrorTranslator::map($validation->errors()))
+                ->withInputs($data)->back();
         }
 
         $postRepo = new PostRepository();

@@ -10,7 +10,7 @@ use Novvai\Stacks\Interfaces\Stackable;
 abstract class Base implements IteratorAggregate, Stackable, Arrayable
 {
     protected $items = [];
-    
+
     public function getIterator()
     {
         return new ArrayIterator($this->items);
@@ -51,9 +51,8 @@ abstract class Base implements IteratorAggregate, Stackable, Arrayable
     {
         $keys = explode(".", $dottedKeys);
         $result = $this->items;
-        foreach($keys as $key){
-            if(array_key_exists($key, $result))
-            {
+        foreach ($keys as $key) {
+            if (array_key_exists($key, $result)) {
                 $result = $result[$key];
                 continue;
             }
@@ -68,7 +67,7 @@ abstract class Base implements IteratorAggregate, Stackable, Arrayable
      * @param string $dottedKeys
      * @return bool
      */
-    public function has(string $dottedKeys):bool
+    public function has(string $dottedKeys): bool
     {
         return !is_null($this->get($dottedKeys));
     }
@@ -105,5 +104,10 @@ abstract class Base implements IteratorAggregate, Stackable, Arrayable
             }
             return $item;
         });
+    }
+
+    public function count()
+    {
+        return count($this->items);
     }
 }

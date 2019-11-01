@@ -26,8 +26,7 @@ interface QueryBuilderInterface
     public function string(int $max): QueryBuilderInterface;
     public function integer(int $max): QueryBuilderInterface;
     public function float($max, $points): QueryBuilderInterface;
-    public function
-    default($defaultValue): QueryBuilderInterface;
+    public function default($defaultValue): QueryBuilderInterface;
     public function decimal($max, $points): QueryBuilderInterface;
     public function indexed(array $collumns): QueryBuilderInterface;
     public function autoIncrement(string $name = "id"): QueryBuilderInterface;
@@ -36,6 +35,7 @@ interface QueryBuilderInterface
     /** 
      * DB managment
      */
+    public function unsetQuery(): QueryBuilderInterface;
     public function finishMigration(): QueryBuilderInterface;
     public function drop(string $tableName): QueryBuilderInterface;
     public function addCollumn(string $collumn): QueryBuilderInterface;

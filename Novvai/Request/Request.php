@@ -86,7 +86,7 @@ class Request
 
     private function processFiles(): void
     {
-        if (isset($_FILES['files']) && $_FILES['files']["error"]!=4) {
+        if (isset($_FILES['files']) && $_FILES['files']["error"] != 4) {
             $filesCount = count(reset($_FILES['files']));
             $file = [];
             for ($i = 0; $i < $filesCount; $i++) {
@@ -98,7 +98,7 @@ class Request
             return;
         }
         $file = reset($_FILES);
-        if(!empty($file) && !empty($file['tmp_name'])){
+        if (!empty($file) && !empty($file['tmp_name'])) {
             $this->filesBag[] = $file;
         }
     }
@@ -110,5 +110,16 @@ class Request
         $this->appendGETParams();
         $this->appendPOSTParams();
         $this->processFiles();
+        $this->normalizeRequestBag();
+    }
+
+    /** 
+     * Removes unnecessary characters from the request entries
+     */
+    public function normalizeRequestBag()
+    {
+        foreach ($this->requestBag as $index => &$entry) {
+            $entry = is_string($entry)?trim($entry):$entry;
+        }
     }
 }

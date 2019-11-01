@@ -2,7 +2,7 @@
 
 namespace Novvai\Response;
 
-use Novvai\Interfaces\Arrayable;
+use Novvai\Session;
 
 class Response
 {
@@ -10,6 +10,7 @@ class Response
     {
         $this->extract();
         $this->code($code);
+        $this->session = Session::make();
     }
 
     public static function make(int $code = 200)
@@ -38,7 +39,7 @@ class Response
      */
     public static function redirect(string $to)
     {
-        header("location: ".config("app.url") . $to);
+        header("location: " . config("app.url") . $to);
         exit();
     }
 
@@ -48,7 +49,7 @@ class Response
      */
     public static function withTemplate(string $view, array $viewVariables = null)
     {
-        foreach ($viewVariables??[] as $key => $value) {
+        foreach ($viewVariables ?? [] as $key => $value) {
             ${$key} = $value;
         }
 
@@ -56,26 +57,21 @@ class Response
     }
 
     /** 
-     * [TODO] CLEAN UP
+     * @param mixed $errors
+     * @return Response
      */
     public function withErrors($errors)
     {
-        $_SESSION["flash"] = [
-            "_fl" => 1,
-            "keys" => ['errors']
-        ];
-        $_SESSION['errors'] =  $errors;
-
+        $this->session->flash("errors", $errors);
         return $this;
     }
     /** 
-     * [TODO] CLEAN UP
+     * @param mixed $inputs
+     * @return Response
      */
     public function withInputs($inputs)
     {
-        $_SESSION["flash"]["keys"][] = "inputs";
-        $_SESSION["inputs"] = [$inputs];
-
+        $this->session->flash("inputs",  $inputs);
         return $this;
     }
 

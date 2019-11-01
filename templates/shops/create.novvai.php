@@ -3,6 +3,11 @@ include_once base_path().'templates/layout/header.novvai.php';
 ?>
 <section class="content">
     <div class="content-fluid">
+        <?php
+        if(session()->has('errors')){
+            include_once load_template('common/error_modal');
+        }
+        ?>
         <div class="row mb-2">
             <div class="col-sm-6">
                 <h1>Магазини</h1>
@@ -21,15 +26,18 @@ include_once base_path().'templates/layout/header.novvai.php';
                     <div class="card-body">
                         <div class="form-group">
                             <label for="title">Адрес</label>
-                            <input type="text" class="form-control" id="title" name="title" >
+                            <input type="text" class="form-control" id="title" name="title" value="<?=session()->get('inputs.title')?>">
+                            <?php renderErr(session()->get('errors.title'))?>
                         </div>
                         <div class="form-group">
                             <label for="phone">Телефон</label>
-                            <input type="text" class="form-control" id="phone" name="phone" >
+                            <input type="text" class="form-control" id="phone" name="phone" value="<?=session()->get('inputs.phone')?>">
+                            <?php renderErr(session()->get('errors.phone'))?>
                         </div>
                         <div class="form-group">
                             <label for="work_time">Работно Време</label>
-                            <input type="text" class="form-control" id="work_time" name="work_time" >
+                            <input type="text" class="form-control" id="work_time" name="work_time" value="<?=session()->get('inputs.work_time')?>" >
+                            <?php renderErr(session()->get('errors.work_time'))?>
                         </div>
                         <div class="form-group">
                             <label for="thumbnail">Снимка</label>
@@ -39,6 +47,7 @@ include_once base_path().'templates/layout/header.novvai.php';
                                     <label class="custom-file-label" for="thumbnail">Избери Файл</label>
                                 </div>
                             </div>
+                            <?php renderErr(session()->get('errors.files'))?>
                         </div>
                        
                     </div>

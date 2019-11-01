@@ -17,12 +17,12 @@ include_once base_path() . 'templates/layout/header.novvai.php';
                 </div>
                 <!-- /.card-header -->
                 <!-- form start -->
-                <form role="form" method="POST" action="/posts/<?=$post->id?>/edit" enctype="multipart/form-data">
+                <form role="form" method="POST" action="/posts/<?= $post->id ?>/edit" enctype="multipart/form-data">
                     <div class="card-body">
                         <div class="form-group">
                             <label for="picture">Снимка</label>
                             <div class="input-group">
-                                <img src="<?=$post->thumbnail?>" class="img-thumbnail" alt="">
+                                <img src="<?= $post->thumbnail ?>" class="img-thumbnail" alt="">
                             </div>
                         </div>
                         <div class="form-group">
@@ -36,19 +36,26 @@ include_once base_path() . 'templates/layout/header.novvai.php';
                         </div>
                         <div class="form-group">
                             <label for="title">Заглавие</label>
-                            <input type="text" class="form-control" id="title" name="title" value="<?=$post->title?>">
+                            <input type="text" class="form-control" id="title" name="title" value="<?= $post->title ?>">
+                            <?php renderErr(session()->get('errors.title')) ?>
                         </div>
                         <div class="form-group">
                             <label for="author">Автор</label>
-                            <input type="text" class="form-control" id="author" name="author" value="<?=$post->author?>">
+                            <input type="text" class="form-control" id="author" name="author" value="<?= $post->author ?>">
+                            <?php renderErr(session()->get('errors.author')) ?>
                         </div>
                         <div class="form-group">
                             <div class="custom-control custom-switch">
-                            <input type="checkbox" class="custom-control-input" id="is_featured" name="is_featured" <?=($post->is_featured)?'checked="checked"':'';?>>
-                            <label class="custom-control-label" for="is_featured">Актуална</label>
+                                <input type="checkbox" class="custom-control-input" id="is_featured" name="is_featured" <?= ($post->is_featured) ? 'checked="checked"' : ''; ?>>
+                                <label class="custom-control-label" for="is_featured">Актуална</label>
                             </div>
                         </div>
-                        <textarea class="textarea" name="content" placeholder="Place some text here"><?=$post->content?></textarea>
+                        <div class="form-group">
+                            <?php renderErr(session()->get('errors.content')) ?>
+                            <label  for="content">Актуална</label>
+
+                            <textarea class="textarea" id="content" name="content" placeholder="Place some text here"><?= $post->content ?></textarea>
+                        </div>
                     </div>
                     <!-- /.card-body -->
 
@@ -62,8 +69,8 @@ include_once base_path() . 'templates/layout/header.novvai.php';
     </div>
 </section>
 <script>
-    document.addEventListener("DOMContentLoaded", ()=>{
-        $('.textarea').summernote();
+    document.addEventListener("DOMContentLoaded", () => {
+        $('#content').summernote();
     });
 </script>
 

@@ -22,6 +22,13 @@ final class ShopRepository extends Base
     /** */
     public function updateById($id, $data)
     {
-        return $this->findById($id)->update($this->processData($data));
+        $shop = $this->findById($id);
+        $shop->title = $data['title'];
+        $shop->phone = $data['phone'];
+        $shop->work_time = $data['work_time'];
+        if($data['files']){
+            $shop->thumbnail = $this->processFile($data['files'] ?? []);
+        }
+        return $shop->update();
     }
 }

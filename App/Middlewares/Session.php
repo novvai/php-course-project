@@ -3,32 +3,13 @@
 namespace App\Middlewares;
 
 use Novvai\Middlewares\Interfaces\MiddlewareInterface;
+use Novvai\Session as WebSession;
 
 class Session implements MiddlewareInterface
 {
     public function handle($request, callable $next)
     {
-        session_start();
-
-        $this->manageFlashSessions();
-
+        WebSession::make();
         return $next();
-    }
-
-
-    private function manageFlashSessions()
-    {
-        if(isset($_SESSION["flash"])){
-            if($_SESSION["flash"]["_fl"] > 0){
-                $_SESSION["flash"]["_fl"]--;
-                return null;
-            }
-
-            foreach($_SESSION["flash"]["keys"]??[] as $key){
-                unset($_SESSION[$key]);
-            }
-            unset($_SESSION["flash"]);
-        }
-        
     }
 }

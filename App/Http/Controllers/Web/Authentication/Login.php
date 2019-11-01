@@ -5,6 +5,9 @@ namespace App\Http\Controllers\Web\Authentication;
 use App\Http\Controllers\Base;
 use App\Services\Authenticator;
 use Novvai\Response\JsonResponse;
+use Novvai\Response\Response;
+use Novvai\Session;
+use Novvai\Utilities\Translations\ErrorTranslator;
 
 class Login extends Base
 {
@@ -23,11 +26,11 @@ class Login extends Base
     {
         $authenticator = Authenticator::make();
         $result = $authenticator->attempt($this->request->all());
-        if(is_null($result)){
-            return header("location: /login");
+        if (is_null($result)) {
+            return Response::make()
+                ->withErrors(ErrorTranslator::fromCode(5000))->back();
         }
-        $_SESSION["user_session"] = $result->token;
-        
+        Session::make()->add("user_session", $result->token);
         header("location: /");
     }
 
@@ -36,8 +39,7 @@ class Login extends Base
      */
     public function logout()
     {
-        session_destroy();
-        unset($_SESSION);
+        Session::make()->destroy();
         header("location: /login");
     }
 }

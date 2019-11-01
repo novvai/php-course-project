@@ -5,12 +5,23 @@ namespace App\Repositories;
 use App\Models\Category;
 
 final class CategoryRepository extends Base
-{ 
+{
     protected $modelClass = Category::class;
 
     public function parents()
     {
         return $this->modelInstance->whereIsNull("parent_id")->get();
+    }
+
+    public function allWithSubCategories()
+    {
+        $categories = $this->parents();
+
+        foreach ($categories as $category) {
+            $category->subCategories();
+        }
+
+        return $categories;
     }
 
     public function getSubCategories($id)
@@ -22,7 +33,9 @@ final class CategoryRepository extends Base
 
     public function create($data)
     {
-        if($data["parent_id"] == "none"){unset($data["parent_id"]);}
+        if ($data["parent_id"] == "none") {
+            unset($data["parent_id"]);
+        }
         return $this->modelInstance->create($data);
     }
 }

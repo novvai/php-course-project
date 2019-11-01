@@ -23,24 +23,45 @@ include_once base_path() . 'templates/layout/header.novvai.php';
                     <?php $activeFilters = Request::getInstance()->get('filters', []); ?>
                     <div class="card-body">
                         <form action="/products" method="GET">
-                            <div class="form-group clearfix mb-3">
-                                <div class="icheck-primary ml-2 d-inline">
-                                    <input type="radio" id="filter_1" name="filters[featured]" value="1" <?= (($activeFilters["featured"] ?? null) === '1') ? 'checked="checked"' : ''; ?>>
-                                    <label for="filter_1">
-                                        Актуални
-                                    </label>
+                            <div class="form-row">
+                                <div class="form-group clearfix mb-3">
+                                    <div class="icheck-primary ml-2 d-inline">
+                                        <input type="radio" id="filter_1" name="filters[featured]" value="1" <?= (($activeFilters["featured"] ?? null) === '1') ? 'checked="checked"' : ''; ?>>
+                                        <label for="filter_1">
+                                            Промоционални
+                                        </label>
+                                    </div>
+                                    <div class="icheck-primary ml-2 d-inline">
+                                        <input type="radio" id="filter_2" name="filters[featured]" value="0" <?= (($activeFilters["featured"] ?? null) === '0') ? 'checked="checked"' : ''; ?>>
+                                        <label for="filter_2">
+                                            Обикновенни
+                                        </label>
+                                    </div>
+                                    <div class="icheck-primary ml-2 d-inline">
+                                        <input type="checkbox" id="is_featured_false" name="filters[sortBy]" value="desc" <?= (($activeFilters["sortBy"] ?? null) === 'desc') ? 'checked="checked"' : '';  ?>>
+                                        <label for="is_featured_false">
+                                            Последно Редактирани
+                                        </label>
+                                    </div>
                                 </div>
-                                <div class="icheck-primary ml-2 d-inline">
-                                    <input type="radio" id="filter_2" name="filters[featured]" value="0" <?= (($activeFilters["featured"] ?? null) === '0') ? 'checked="checked"' : ''; ?>>
-                                    <label for="filter_2">
-                                        Нормални
-                                    </label>
+                            </div>
+                            <div class="form-row">
+                                <div class="form-group col-md-4">
+                                    <label for="name">Име</label>
+                                    <input type="text" class="form-control" id="name" name="filters[name]" value="<?= $activeFilters["name"] ?? '' ?>">
                                 </div>
-                                <div class="icheck-primary ml-2 d-inline">
-                                    <input type="checkbox" id="is_featured_false" name="filters[sortBy]" value="desc" <?= (($activeFilters["sortBy"] ?? null) === 'desc') ? 'checked="checked"' : '';  ?>>
-                                    <label for="is_featured_false">
-                                        Последно Редактирани
-                                    </label>
+                                <div class="form-group  col-md-4">
+                                    <label for="category">Категория:</label>
+                                    <select name="filters[category]" id="category" class="form-control">
+                                        <option value=""></option>
+                                        <?php foreach ($categories as $category) { ?>
+                                            <optgroup label="<?= $category->name ?>">
+                                                <?php foreach ($category->subCategories ?? [] as $sub_cat) { ?>
+                                                    <option value="<?= $sub_cat->id ?>" <?= (($activeFilters["category"] ?? null) == $sub_cat->id) ? 'selected="selected"' : '';  ?>><?= $sub_cat->name ?></option>
+                                                <?php } ?>
+                                            </optgroup>
+                                        <?php } ?>
+                                    </select>
                                 </div>
                             </div>
                             <div class="form-group clearfix">

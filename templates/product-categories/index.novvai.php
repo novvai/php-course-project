@@ -21,6 +21,7 @@ include_once base_path() . 'templates/layout/header.novvai.php';
                         <label for="name" class="col-sm-2 col-form-label">Наименование</label>
                         <div class="col-sm-4">
                             <input type="text" class="form-control" id="name" name="name">
+                            <?php renderErr(session()->get('errors.name')) ?>
                         </div>
                         <label for="parent_id" class="col-sm-2 col-form-label">Главна категория</label>
                         <div class="col-sm-4">

@@ -50,12 +50,4 @@ final class PostRepository extends Base
     {
         $this->modelInstance->where('is_featured', $value);
     }
-
-    /**
-     * 
-     */
-    private function sortBy($direction)
-    {
-        $this->modelInstance->sortBy('updated_at', $direction);
-    }
 }

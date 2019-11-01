@@ -31,18 +31,18 @@ Router::middlewareGroup("session", function () {
         /** Product Categories */
         /** Products */
         Router::get("/products", "App\\Http\\Controllers\\Web\\Product@index");
-        Router::get("/products/{product_id}", "App\\Http\\Controllers\\Web\\Product@view");
         Router::get("/products/create", "App\\Http\\Controllers\\Web\\Product@create");
         Router::post("/products/create", "App\\Http\\Controllers\\Web\\Product@processCreate");
+        Router::get("/products/{product_id}", "App\\Http\\Controllers\\Web\\Product@view");
         Router::get("/products/{product_id}/edit", "App\\Http\\Controllers\\Web\\Product@edit");
         Router::post("/products/{product_id}/edit", "App\\Http\\Controllers\\Web\\Product@processEdit");
         Router::delete("/products/{product_id}/delete", "App\\Http\\Controllers\\Web\\Product@delete");
         /** Products */
         /** Blog */
         Router::get("/posts", "App\\Http\\Controllers\\Web\\Posts@index");
-        Router::get("/posts/{post_id}", "App\\Http\\Controllers\\Web\\Posts@view");
         Router::get("/posts/create", "App\\Http\\Controllers\\Web\\Posts@create");
         Router::post("/posts/create", "App\\Http\\Controllers\\Web\\Posts@processCreate");
+        Router::get("/posts/{post_id}", "App\\Http\\Controllers\\Web\\Posts@view");
         Router::get("/posts/{post_id}/edit", "App\\Http\\Controllers\\Web\\Posts@edit");
         Router::post("/posts/{post_id}/edit", "App\\Http\\Controllers\\Web\\Posts@processEdit");
         Router::delete("/posts/{post_id}/delete", "App\\Http\\Controllers\\Web\\Posts@delete");

@@ -95,7 +95,7 @@ class Base implements Arrayable
 
         $this->builder->create($createInfo);
 
-        return $this->dbWrite($createInfo);
+        return $this->dbWrite($createInfo, true);
     }
 
     /**
@@ -105,13 +105,17 @@ class Base implements Arrayable
      * 
      * @return Stackable
      */
-    private function dbWrite($data)
+    private function dbWrite($data, $newRecord = false)
     {
         /** @var void|array $dbResponse */
         $dbResponse = $this->connection->execute($this->builder->getQuery());
+        $this->builder->unsetQuery();
 
         if ($dbResponse != 1) {
             return $this->handleError($dbResponse);
+        }
+        if ($newRecord === true) {
+            $data[$this->uniqueIdentifier] =  $this->connection->lastInsertId();
         }
 
         return $this->wrap([$data]);
@@ -130,7 +134,11 @@ class Base implements Arrayable
 
         $this->builder->delete($deleteData);
 
-        return $this->connection->execute($this->builder->getQuery());
+        $deleteQuery = $this->builder->getQuery();
+
+        $this->builder->unsetQuery();
+
+        return $this->connection->execute($deleteQuery);
     }
 
     /**
@@ -154,13 +162,39 @@ class Base implements Arrayable
     }
 
     /**
-     * @param array $args
+     * @param string $column
      * 
      * @return self
      */
     public function whereIsNull($column): Base
     {
         $this->builder->whereIsNull($column);
+
+        return $this;
+    }
+
+    /**
+     * @param string $column
+     * @param string $value
+     * 
+     * @return self
+     */
+    public function whereLike($column, $value): Base
+    {
+        $this->builder->whereLike($column, $value);
+
+        return $this;
+    }
+
+    /**
+     * @param string $column
+     * @param string $value
+     * 
+     * @return self
+     */
+    public function whereLikeFuzzy($column, $value): Base
+    {
+        $this->builder->whereLikeFuzzy($column, $value);
 
         return $this;
     }
@@ -246,6 +280,7 @@ class Base implements Arrayable
         $this->builder->setSelectableFields($this->retrievable);
         $this->builder->buildQuery();
         $query = $this->builder->getQuery();
+        $this->builder->unsetQuery();
 
         $result =  $this->connection->getBy($query);
 
@@ -382,7 +417,8 @@ class Base implements Arrayable
     private function handleError(array $err)
     {
         return Stack::make()->collect([
-            'errors' => $this->mapError((int) $err['code'])
+            'errors' => $this->mapError((int) $err['code']),
+            'original_err' => $err['message']
         ]);
     }
 

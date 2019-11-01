@@ -40,6 +40,15 @@ class PdoDriver extends Base
         $this->connection = new PDO($dsn, $user, $pass, self::DRIVER_OPTIONS);
     }
 
+    /**
+     * Returns the last inserted id in given session
+     * 
+     * @return int
+     */
+    public function lastInsertId()
+    {
+        return $this->connection->lastInsertId();
+    }
 
     /**
      * Fetching all entries matching Query String

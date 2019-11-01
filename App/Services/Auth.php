@@ -2,8 +2,10 @@
 
 namespace App\Services;
 
+use Novvai\Session;
 use Novvai\Container;
 use App\Models\LoginToken;
+use App\Repositories\LoginTokenRepository;
 
 class Auth
 {
@@ -30,9 +32,10 @@ class Auth
 
     private function regenUser()
     {
-        if (isset($_SESSION["user_session"])) {
-            $loginToken = Container::make(LoginToken::class);
-            $token = $loginToken->where("token", $_SESSION["user_session"])->get()->first();
+        $session = Session::make();
+        if ($session->has("user_session")) {
+            $loginTokenRepo = new LoginTokenRepository();
+            $token = $loginTokenRepo->findByToken($session->get("user_session"));
             $this->user = $token->user();
             unset($this->user->password);
         }

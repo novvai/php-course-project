@@ -27,22 +27,28 @@ include_once base_path() . 'templates/layout/header.novvai.php';
                                     <label class="custom-file-label" for="picture">Избери Файл</label>
                                 </div>
                             </div>
+                            <?php renderErr(session()->get('errors.files')) ?>
                         </div>
                         <div class="form-group">
                             <label for="title">Заглавие</label>
                             <input type="text" class="form-control" id="title" name="title">
+                            <?php renderErr(session()->get('errors.title')) ?>
                         </div>
                         <div class="form-group">
                             <label for="author">Автор</label>
                             <input type="text" class="form-control" id="author" name="author">
+                            <?php renderErr(session()->get('errors.author')) ?>
                         </div>
                         <div class="form-group">
                             <div class="custom-control custom-switch">
-                            <input type="checkbox" class="custom-control-input" id="is_featured" name="is_featured">
-                            <label class="custom-control-label" for="is_featured">Актуална</label>
+                                <input type="checkbox" class="custom-control-input" id="is_featured" name="is_featured">
+                                <label class="custom-control-label" for="is_featured">Актуална</label>
                             </div>
                         </div>
-                        <textarea class="textarea" name="content" placeholder="Place some text here"></textarea>
+                        <div class="form-group">
+                            <textarea class="textarea" name="content" placeholder="Place some text here"></textarea>
+                            <?php renderErr(session()->get('errors.content')) ?>
+                        </div>
                     </div>
                     <!-- /.card-body -->
 
@@ -56,7 +62,7 @@ include_once base_path() . 'templates/layout/header.novvai.php';
     </div>
 </section>
 <script>
-    document.addEventListener("DOMContentLoaded", ()=>{
+    document.addEventListener("DOMContentLoaded", () => {
         $('.textarea').summernote();
     });
 </script>

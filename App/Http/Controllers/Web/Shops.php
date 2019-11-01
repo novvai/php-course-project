@@ -6,6 +6,7 @@ use Novvai\Response\Response;
 use App\Http\Controllers\Base;
 use App\Repositories\ShopRepository;
 use App\Validators\ShopRequestValidator;
+use Novvai\Utilities\Translations\ErrorTranslator;
 
 class Shops extends Base
 {
@@ -34,7 +35,9 @@ class Shops extends Base
         $validator->validate('files', ["required"]);
 
         if ($validator->failed()) {
-            return Response::make()->withErrors($validator->errors())->withInputs($data)->back();
+            return Response::make()
+                ->withErrors(ErrorTranslator::map($validator->errors()))
+                ->withInputs($data)->back();
         }
 
         (new ShopRepository())->create($data);
@@ -59,7 +62,7 @@ class Shops extends Base
         $validator = new ShopRequestValidator($data);
         if ($validator->failed()) {
             return Response::make()
-                ->withErrors($validator->errors())
+                ->withErrors(ErrorTranslator::map($validator->errors()))
                 ->withInputs($data)
                 ->back();
         }

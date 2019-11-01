@@ -4,6 +4,7 @@ namespace App\Validators;
 use Novvai\Utilities\Validator\Validator;
 
 class ShopRequestValidator extends Validator{
+    
     /**
      * 
      */

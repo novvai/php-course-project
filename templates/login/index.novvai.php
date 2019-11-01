@@ -14,12 +14,13 @@ include_once base_path() . 'templates/layout/guest-header.novvai.php';
           <!-- form start -->
           <form role="form" method="POST" action="/login">
             <div class="card-body">
+              <?php renderErr(session()->get('errors.0'))?>
               <div class="form-group">
-                <label for="username">Е-поща</label>
+                <label for="username">Потребителско име:</label>
                 <input type="email" class="form-control" id="username" name="username" placeholder="test@test.com">
               </div>
               <div class="form-group">
-                <label for="password">Парола</label>
+                <label for="password">Парола:</label>
                 <input type="password" class="form-control" id="password" name="password" placeholder="********">
               </div>
 
