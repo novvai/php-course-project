@@ -44,10 +44,14 @@ class Base implements Arrayable
      */
     protected $tableName = "";
 
-    public function __construct(DBConnectionInterface $connection, QueryBuilderInterface $builder)
+    /**
+     * Has the DB booted
+     * @var bool
+     */
+    private $booted = false;
+
+    public function __construct()
     {
-        $this->builder = $builder;
-        $this->connection = $connection;
         $this->bootstrap();
     }
 
@@ -59,6 +63,7 @@ class Base implements Arrayable
      */
     public function __call($methodName, $arguments)
     {
+        $this->dbSetup();
         $this->builder->$methodName(...$arguments);
 
         return $this;
@@ -75,6 +80,7 @@ class Base implements Arrayable
      */
     public function update($updateInfo = null)
     {
+        $this->dbSetup();
         // ["username"=>1]
         $identifier = [$this->uniqueIdentifier => $this->{$this->uniqueIdentifier}];
         $updateInfo = $updateInfo ?: get_public_vars($this);
@@ -94,34 +100,13 @@ class Base implements Arrayable
      */
     public function create($createInfo = null)
     {
+        $this->dbSetup();
+
         $createInfo = $createInfo ?: get_public_vars($this);
 
         $this->builder->create($createInfo);
 
         return $this->dbWrite($createInfo, true);
-    }
-
-    /**
-     * Initialize execution of Write to db
-     * 
-     * @param array $data
-     * 
-     * @return Stackable
-     */
-    private function dbWrite($data, $newRecord = false)
-    {
-        /** @var void|array $dbResponse */
-        $dbResponse = $this->connection->execute($this->builder->getQuery());
-        $this->builder->unsetQuery();
-
-        if ($dbResponse != 1) {
-            return $this->handleError($dbResponse);
-        }
-        if ($newRecord === true) {
-            $data[$this->uniqueIdentifier] =  $this->connection->lastInsertId();
-        }
-
-        return $this->wrap([$data]);
     }
 
     /**
@@ -133,6 +118,8 @@ class Base implements Arrayable
      */
     public function delete($deleteData = null)
     {
+        $this->dbSetup();
+
         $deleteData = $deleteData ?: get_public_vars($this);
 
         $this->builder->delete($deleteData);
@@ -166,9 +153,12 @@ class Base implements Arrayable
 
     public function count()
     {
+        $this->dbSetup();
+
         $query = $this->builder->getCountQuery();
         $result =  $this->connection->getBy($query);
         $result = reset($result);
+
         return $result['counted'];
     }
 
@@ -177,6 +167,8 @@ class Base implements Arrayable
      */
     public function get(): Stackable
     {
+        $this->dbSetup();
+
         $this->builder->setSelectableFields($this->retrievable);
         $this->builder->buildQuery();
         $query = $this->builder->getQuery();
@@ -185,6 +177,29 @@ class Base implements Arrayable
         $result =  $this->connection->getBy($query);
 
         return $this->wrap($result);
+    }
+
+    /**
+     * Initialize execution of Write to db
+     * 
+     * @param array $data
+     * 
+     * @return Stackable
+     */
+    private function dbWrite($data, $newRecord = false)
+    {
+        /** @var void|array $dbResponse */
+        $dbResponse = $this->connection->execute($this->builder->getQuery());
+        $this->builder->unsetQuery();
+
+        if ($dbResponse != 1) {
+            return $this->handleError($dbResponse);
+        }
+        if ($newRecord === true) {
+            $data[$this->uniqueIdentifier] =  $this->connection->lastInsertId();
+        }
+
+        return $this->wrap([$data]);
     }
 
     /**
@@ -254,7 +269,6 @@ class Base implements Arrayable
     {
         $this->setTimeStampOptions();
         $this->setTableName();
-        $this->dbSetup();
     }
 
     /**
@@ -262,7 +276,13 @@ class Base implements Arrayable
      */
     private function dbSetup()
     {
-        $this->builder->setTableName($this->getTableName());
+        if (!$this->booted) {
+            $this->booted = true;
+            $this->builder = Container::makeFromBinding(QueryBuilderInterface::class);
+            $this->connection = Container::makeFromBinding(DBConnectionInterface::class);
+
+            $this->builder->setTableName($this->getTableName());
+        }
     }
 
     /**
@@ -352,11 +372,11 @@ class Base implements Arrayable
         foreach ($pubFields as $name => $_) {
             if (in_array($name, $this->private)) {
                 if ($pubFields[$name] instanceof Traversable) {
-                unset($pubFields[$name]);
-            }
-            if ($pubFields[$name] instanceof Arrayable) {
-                $pubFields[$name] = $pubFields[$name]->toArray();
-            }
+                    unset($pubFields[$name]);
+                }
+                if ($pubFields[$name] instanceof Arrayable) {
+                    $pubFields[$name] = $pubFields[$name]->toArray();
+                }
 
                 foreach ($pubFields[$name] as $key => $field) {
                     if ($pubFields[$name][$key] instanceof Arrayable) {

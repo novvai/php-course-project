@@ -82,7 +82,8 @@ final class ProductRepository extends Base
     public function attachProductDetails($id, $productDetails)
     {
         $productDetailRepo = new ProductDetailRepository();
-        foreach ($productDetails as $detail) {
+
+        foreach ($productDetails ?? [] as $detail) {
             $detail['product_id'] = $id;
             $productDetailRepo->create($detail);
         }
