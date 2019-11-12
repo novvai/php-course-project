@@ -26,10 +26,14 @@ class Container
         return $reflection->newInstanceArgs($resolvedDependencies);
     }
 
+    /**
+     * @param string $classBinding
+     * 
+     * @return instance
+     */
     static public function makeFromBinding(string $classBinding)
     {
-        $dep = static::checkBinding($classBinding);
-        return static::make($dep);
+        return static::make(static::checkBinding($classBinding));
     }
 
     /**
