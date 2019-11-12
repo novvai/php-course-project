@@ -16,9 +16,9 @@ class Posts extends Base
     public function index()
     {
         $postsRepo = new PostRepository();
-        $posts = $postsRepo->allBy($this->request->get('filters', []));
+        $paginatedPosts = $postsRepo->applyFilters($this->request->get('filters', []))->paginate($this->request->page, 10);
 
-        Response::withTemplate("posts/index", ["posts" => $posts]);
+        Response::withTemplate("posts/index", ["posts" => $paginatedPosts->get(), "paginatedPosts" => $paginatedPosts]);
     }
     /**
      * Lists all posts

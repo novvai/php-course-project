@@ -144,7 +144,7 @@ abstract class Validator
      */
     private function required($ctx)
     {
-        $invalid = is_null($ctx) || empty($ctx) || $ctx == "";
+        $invalid = is_null($ctx) || (empty($ctx) && $ctx!=0) || $ctx === "";
         if ($invalid) {
             $this->errors['errors'][$this->currentKey][] = [
                 "code" => 9006,

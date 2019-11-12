@@ -32,17 +32,17 @@ include_once base_path() . 'templates/layout/header.novvai.php';
                         <div class="form-row">
                             <div class="form-group col-md-4">
                                 <label for="name">Име</label>
-                                <input type="text" class="form-control" id="name" name="name">
+                                <input type="text" class="form-control" id="name" name="name" value="<?= session()->get('inputs.name') ?>">
                                 <?php renderErr(session()->get('errors.name')) ?>
                             </div>
                             <div class="form-group col-md-4">
                                 <label for="price">Цена</label>
-                                <input type="number" class="form-control" min="0" step=".01" id="price" name="price" value="0">
+                                <input type="number" class="form-control" min="0" step=".01" id="price" name="price" value="<?= session()->get('inputs.price', 0) ?>">
                                 <?php renderErr(session()->get('errors.price')) ?>
                             </div>
                             <div class="form-group col-md-4">
                                 <label for="quantity">Наличност</label>
-                                <input type="number" step="1" min='0' class="form-control" id="quantity" name="quantity" value="0">
+                                <input type="number" step="1" min='0' class="form-control" id="quantity" name="quantity" value="<?= session()->get('inputs.quantity', 0) ?>">
                                 <?php renderErr(session()->get('errors.quantity')) ?>
                             </div>
                         </div>
@@ -52,7 +52,7 @@ include_once base_path() . 'templates/layout/header.novvai.php';
                                 <?php foreach ($categories as $category) { ?>
                                     <optgroup label="<?= $category->name ?>">
                                         <?php foreach ($category->subCategories() ?? [] as $sub_cat) { ?>
-                                            <option value="<?= $sub_cat->id ?>"><?= $sub_cat->name ?></option>
+                                            <option value="<?= $sub_cat->id ?>" <?= (session()->get('inputs.category_id') == $sub_cat->id) ? "selected='selected'" : '' ?>><?= $sub_cat->name ?></option>
                                         <?php } ?>
                                     </optgroup>
                                 <?php } ?>
@@ -60,12 +60,16 @@ include_once base_path() . 'templates/layout/header.novvai.php';
                         </div>
                         <div class="form-group">
                             <label for="short_desc">Кратко описание:</label>
-                            <textarea class="form-control" name="short_desc" width="100%" id="short_desc" rows="3" placeholder="Кратко описание тук..."></textarea>
+                            <textarea class="form-control" name="short_desc" width="100%" id="short_desc" rows="3" placeholder="Кратко описание тук...">
+                            <?= session()->get('inputs.short_desc') ?>
+                            </textarea>
                             <?php renderErr(session()->get('errors.short_desc')) ?>
                         </div>
                         <div class="form-group">
                             <label for="description">Пълно описание:</label>
-                            <textarea class="form-control" id="description" name="description" rows="3" width="100%" placeholder="Пълно описание тук..."></textarea>
+                            <textarea class="form-control" id="description" name="description" rows="3" width="100%" placeholder="Пълно описание тук...">
+                            <?= session()->get('inputs.description') ?>
+                            </textarea>
                             <?php renderErr(session()->get('errors.description')) ?>
                         </div>
                         <div class="form-group">
@@ -83,7 +87,21 @@ include_once base_path() . 'templates/layout/header.novvai.php';
                             </div>
                         </div>
                         <div data-nv-container="additional_details">
-
+                            <?php foreach (session()->get('inputs.additional', []) as $index => $additonal) { ?>
+                                <div class="form-row additiona_info">
+                                    <div class="form-group  col-sm-3">
+                                        <input type="text" class="form-control " placeholder='Обем' name="additional[<?=$index?>][name]" id="" value="<?=$additonal['name']?>">
+                                    </div>
+                                    <div class="form-group col-sm-3">
+                                        <input type="text" class="form-control " placeholder='200 мл.' name="additional[<?=$index?>][value]" id=""value="<?=$additonal['value']?>">
+                                    </div>
+                                    <div class="form-group col-sm-3">
+                                        <a href="#" data-nv-action="remove" class="btn btn-danger"><span class="fas fa-times"></span></a>
+                                    </div>
+                                </div>
+                            <?
+                            }
+                            ?>
                         </div>
                     </div>
                     <!-- /.card-body -->

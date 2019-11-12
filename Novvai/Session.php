@@ -53,7 +53,7 @@ class Session implements SessionInterface
      * @param string $key
      * @return mixed $result
      */
-    public function get(string $dottedPath)
+    public function get(string $dottedPath, $default=null)
     {
         $result = $_SESSION;
         $components = explode('.', $dottedPath);
@@ -62,7 +62,7 @@ class Session implements SessionInterface
                 $result = $result[$component];
                 continue;
             }
-            $result = null;
+            $result = $default;
             break;
         }
 

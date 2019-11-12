@@ -4,6 +4,7 @@ namespace App\Repositories;
 
 use Novvai\Container;
 use Novvai\Model\Base as NovvaiBase;
+use Novvai\Model\Utilities\Pagination;
 use Novvai\Utilities\File;
 
 abstract class Base
@@ -54,6 +55,30 @@ abstract class Base
     public function deleteById($id)
     {
         return $this->findById($id)->delete();
+    }
+
+    public function allBy($filters = [])
+    {
+        $this->applyFilters($filters);
+        return $this->modelInstance->get();
+    }
+
+    public function applyFilters($filters = [])
+    {
+        $filters = is_array($filters) ? $filters : [];
+        foreach ($filters as $filter => $args) {
+            $this->{$filter}($args);
+        }
+
+        return $this;
+    }
+
+    /**
+     * 
+     */
+    public function paginate($page, $limit)
+    {
+        return new Pagination($this->modelInstance, $page, $limit);
     }
 
     /**

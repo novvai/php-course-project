@@ -2,13 +2,13 @@
 
 namespace Novvai\Model;
 
+use Traversable;
 use Novvai\Container;
 use Novvai\Stacks\Stack;
 use Novvai\Interfaces\Arrayable;
 use Novvai\Stacks\Interfaces\Stackable;
 use Novvai\DBDrivers\Interfaces\DBConnectionInterface;
 use Novvai\QueryBuilders\Interfaces\QueryBuilderInterface;
-use Traversable;
 
 class Base implements Arrayable
 {
@@ -272,6 +272,14 @@ class Base implements Arrayable
         return $this->{debug_backtrace()[1]['function']} = $parent->where($identifier, $this->{$on})->get()->first();
     }
 
+    public function count(Type $var = null)
+    {
+        $query = $this->builder->getCountQuery();
+        $result =  $this->connection->getBy($query);
+        $result = reset($result);
+        return $result['counted'];
+    }
+
     /**
      * @return Novvai\Stacks\Stack
      */
@@ -451,13 +459,13 @@ class Base implements Arrayable
 
         foreach ($pubFields as $name => $_) {
             if (in_array($name, $this->private)) {
+                if ($pubFields[$name] instanceof Traversable) {
                 unset($pubFields[$name]);
             }
             if ($pubFields[$name] instanceof Arrayable) {
                 $pubFields[$name] = $pubFields[$name]->toArray();
             }
 
-            if ($pubFields[$name] instanceof Traversable) {
                 foreach ($pubFields[$name] as $key => $field) {
                     if ($pubFields[$name][$key] instanceof Arrayable) {
                         $pubFields[$name][$key] = $field->toArray();

@@ -41,29 +41,20 @@ final class ProductRepository extends Base
         return $record->update();
     }
 
-    public function allBy($filters = [])
-    {
-        $filters = is_array($filters) ? $filters : [];
-        foreach ($filters as $filter => $args) {
-            $this->{$filter}($args);
-        }
-        return $this->modelInstance->get();
-    }
-
     /**
      * 
      */
-    private function featured($value)
+    protected function featured($value)
     {
         $this->modelInstance->where('is_featured', $value);
     }
 
-    private function category($id)
+    protected function category($id)
     {
         $id ? $this->modelInstance->where("category_id", $id) : null;
     }
 
-    private function name($name)
+    protected function name($name)
     {
         $name ? $this->modelInstance->whereLike("name", $name) : null;
     }

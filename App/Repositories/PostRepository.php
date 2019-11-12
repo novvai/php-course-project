@@ -34,19 +34,11 @@ final class PostRepository extends Base
         return $record->update();
     }
 
-    public function allBy($filters = [])
-    {
-        $filters = is_array($filters) ? $filters : [];
-        foreach ($filters as $filter => $args) {
-            $this->{$filter}($args);
-        }
-        return $this->modelInstance->get();
-    }
 
     /**
      * 
      */
-    private function featured($value)
+    protected function featured($value)
     {
         $this->modelInstance->where('is_featured', $value);
     }

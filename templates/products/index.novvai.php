@@ -126,6 +126,9 @@ include_once base_path() . 'templates/layout/header.novvai.php';
                         </table>
                     </div>
                     <!-- /.card-body -->
+                    <div class="card-footer clearfix">
+                        <?php $productsPagination->render();?>
+                    </div>
                 </div>
                 <!-- /.card -->
             </div>

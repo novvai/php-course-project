@@ -195,8 +195,7 @@ class PdoBuilder extends Base
      * 
      * @return self
      */
-    public function
-    default($defaultValue): QueryBuilderInterface
+    public function default($defaultValue): QueryBuilderInterface
     {
         $this->query .= " DEFAULT $defaultValue ";
         return $this;
@@ -436,6 +435,13 @@ class PdoBuilder extends Base
         $this->query = "SELECT {$this->getSelectableFields()} FROM {$this->tableName}" . $this->query . $this->queryAdditions;
 
         return $this;
+    }
+    /**
+     * Basic select query without constraints
+     */
+    public function getCountQuery()
+    {
+        return "SELECT COUNT(*) as counted FROM {$this->tableName}" . $this->query;
     }
 
     /**

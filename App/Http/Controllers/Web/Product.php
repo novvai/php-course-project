@@ -16,10 +16,10 @@ class Product extends Base
      */
     public function index()
     {
-        $products = (new ProductRepository())->allBy($this->request->get('filters', []));
+        $products = (new ProductRepository())->applyFilters($this->request->get('filters', []))->paginate($this->request->get('page'), 10);
         $categories = (new CategoryRepository())->allWithSubCategories();
-
-        Response::withTemplate("products/index", ["products" => $products, "categories" => $categories]);
+        
+        Response::withTemplate("products/index", ["products" => $products->get(),"productsPagination"=>$products, "categories" => $categories]);
     }
     /**
      * Lists all posts
@@ -59,7 +59,8 @@ class Product extends Base
         $productRepo = new ProductRepository();
 
         $product = $productRepo->create($data);
-        $productRepo->manageProductDetails($product->id, $data['additional']);
+        
+        $productRepo->manageProductDetails($product->first()->id, $data['additional']);
 
         return Response::redirect("products");
     }

@@ -23,6 +23,19 @@ class Request
         $this->headersInstance = new Headers();
         $this->buildRequestBag();
     }
+    /**
+     * It's magic
+     * @param string $name
+     */
+    public function __get($name)
+    {
+        return $this->get($name);
+    }
+
+    public function url()
+    {
+        # TODO
+    }
 
     public function headers()
     {
