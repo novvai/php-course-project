@@ -6,12 +6,15 @@ use Traversable;
 use Novvai\Container;
 use Novvai\Stacks\Stack;
 use Novvai\Interfaces\Arrayable;
+use Novvai\Model\Traits\Relations;
 use Novvai\Stacks\Interfaces\Stackable;
 use Novvai\DBDrivers\Interfaces\DBConnectionInterface;
 use Novvai\QueryBuilders\Interfaces\QueryBuilderInterface;
 
 class Base implements Arrayable
 {
+    use Relations;
+
     /**
      * List of fields that should be retrived by the query
      */
@@ -49,18 +52,18 @@ class Base implements Arrayable
     }
 
     /**
-     * Adds pagination to the query
+     * @param string $methodName
+     * @param array $arguments
      * 
-     * @param int $offset
-     * @param int $limit = 10
      * @return self
      */
-    public function paginate($offset, $limit = 10)
+    public function __call($methodName, $arguments)
     {
-        $this->builder->paginate($offset, $limit);
+        $this->builder->$methodName(...$arguments);
 
         return $this;
     }
+
 
     /**
      * Attempts to update record from given data,
@@ -161,118 +164,7 @@ class Base implements Arrayable
         return $this->get();
     }
 
-    /**
-     * @param string $column
-     * 
-     * @return self
-     */
-    public function whereIsNull($column): Base
-    {
-        $this->builder->whereIsNull($column);
-
-        return $this;
-    }
-
-    /**
-     * @param string $column
-     * @param string $value
-     * 
-     * @return self
-     */
-    public function whereLike($column, $value): Base
-    {
-        $this->builder->whereLike($column, $value);
-
-        return $this;
-    }
-
-    /**
-     * @param string $column
-     * @param string $value
-     * 
-     * @return self
-     */
-    public function whereLikeFuzzy($column, $value): Base
-    {
-        $this->builder->whereLikeFuzzy($column, $value);
-
-        return $this;
-    }
-    /**
-     * @param array $args
-     * 
-     * @return self
-     */
-    public function sortBy($column, $direction): Base
-    {
-        $this->builder->sortBy($column, $direction);
-
-        return $this;
-    }
-
-    /**
-     * @param array $args
-     * 
-     * @return self
-     */
-    public function andWhere(...$args): Base
-    {
-        $this->builder->andWhere(...$args);
-
-        return $this;
-    }
-
-    /**
-     * @param array $args
-     * 
-     * @return self
-     */
-    public function orWhere(...$args): Base
-    {
-        $this->builder->orWhere(...$args);
-
-        return $this;
-    }
-
-    /**
-     * @param array $args
-     * 
-     * @return self
-     */
-    public function where(...$args): Base
-    {
-        $this->builder->where(...$args);
-
-        return $this;
-    }
-
-    /**
-     * 
-     */
-    public function hasMany(string $className, string $identifier = null, string $on = null)
-    {
-        $identifier = $identifier ?: 'id';
-        $child = Container::make($className);
-        $relation_name = get_short_name($this);
-
-        $on = $on ?: $relation_name . '_id';
-
-        return $this->{debug_backtrace()[1]['function']} = $child->where($on, $this->{$identifier})->all();
-    }
-
-    public function belongsTo(string $className, string $identifier = null, string $on = null)
-    {
-
-        $identifier = $identifier ?: 'id';
-        $parent = Container::make($className);
-        $relation_name = get_short_name($parent);
-
-        $on = $on ?: $relation_name . '_id';
-
-        return $this->{debug_backtrace()[1]['function']} = $parent->where($identifier, $this->{$on})->get()->first();
-    }
-
-    public function count(Type $var = null)
+    public function count()
     {
         $query = $this->builder->getCountQuery();
         $result =  $this->connection->getBy($query);
