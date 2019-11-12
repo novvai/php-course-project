@@ -63,7 +63,7 @@ class Base implements Arrayable
      */
     public function __call($methodName, $arguments)
     {
-        $this->dbSetup();
+        $this->bootDB();
         $this->builder->$methodName(...$arguments);
 
         return $this;
@@ -80,7 +80,7 @@ class Base implements Arrayable
      */
     public function update($updateInfo = null)
     {
-        $this->dbSetup();
+        $this->bootDB();
         // ["username"=>1]
         $identifier = [$this->uniqueIdentifier => $this->{$this->uniqueIdentifier}];
         $updateInfo = $updateInfo ?: get_public_vars($this);
@@ -100,7 +100,7 @@ class Base implements Arrayable
      */
     public function create($createInfo = null)
     {
-        $this->dbSetup();
+        $this->bootDB();
 
         $createInfo = $createInfo ?: get_public_vars($this);
 
@@ -118,7 +118,7 @@ class Base implements Arrayable
      */
     public function delete($deleteData = null)
     {
-        $this->dbSetup();
+        $this->bootDB();
 
         $deleteData = $deleteData ?: get_public_vars($this);
 
@@ -153,7 +153,7 @@ class Base implements Arrayable
 
     public function count()
     {
-        $this->dbSetup();
+        $this->bootDB();
 
         $query = $this->builder->getCountQuery();
         $result =  $this->connection->getBy($query);
@@ -167,7 +167,7 @@ class Base implements Arrayable
      */
     public function get(): Stackable
     {
-        $this->dbSetup();
+        $this->bootDB();
 
         $this->builder->setSelectableFields($this->retrievable);
         $this->builder->buildQuery();
@@ -274,10 +274,11 @@ class Base implements Arrayable
     /**
      * @return void
      */
-    private function dbSetup()
+    private function bootDB()
     {
         if (!$this->booted) {
             $this->booted = true;
+            
             $this->builder = Container::makeFromBinding(QueryBuilderInterface::class);
             $this->connection = Container::makeFromBinding(DBConnectionInterface::class);
 
