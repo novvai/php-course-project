@@ -13,6 +13,11 @@ include_once base_path() . 'templates/layout/header.novvai.php';
         </div>
         <div class="row">
             <div class="col-12">
+                <?php if(session()->has('success_msg')){ include_once load_template('common/success_modal'); }?>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-12">
                 <div class="card">
                     <div class="card-body table-responsive p-0">
                         <table class="table table-hover">

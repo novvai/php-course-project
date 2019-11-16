@@ -65,6 +65,17 @@ class Response
         $this->session->flash("errors", $errors);
         return $this;
     }
+
+    /** 
+     * @param string $message
+     * @return Response
+     */
+    public function withSuccessMsg(string $message)
+    {
+        $this->session->flash("success_msg", $message);
+        return $this;
+    }
+    
     /** 
      * @param mixed $inputs
      * @return Response

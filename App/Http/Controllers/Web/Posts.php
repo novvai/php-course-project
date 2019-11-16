@@ -56,7 +56,7 @@ class Posts extends Base
         $postRepo = new PostRepository();
         $postRepo->create($data);
 
-        return Response::redirect("posts");
+        return Response::make()->withSuccessMsg("Блог поста беше добавен успешно.")->redirect("posts");
     }
 
     /**
@@ -89,7 +89,7 @@ class Posts extends Base
         $postRepo = new PostRepository();
         $postRepo->updateById($id, $data);
 
-        return Response::redirect("posts");
+        return Response::make()->withSuccessMsg("Блог поста беше редактиран успешно.")->redirect("posts");
     }
 
     /**
@@ -101,6 +101,6 @@ class Posts extends Base
     public function delete($id)
     {
         (new PostRepository())->deleteById($id);
-        return Response::redirect("posts");
+        return Response::make()->withSuccessMsg("Блог поста беше изтрит успешно.")->redirect("posts");
     }
 }

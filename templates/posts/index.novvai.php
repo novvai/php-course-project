@@ -14,6 +14,11 @@ include_once base_path() . 'templates/layout/header.novvai.php';
                 <a href="/posts/create" class="btn btn-success float-sm-right">Създай</a>
             </div>
         </div>
+        <div class="row">
+            <div class="col-12">
+                <?php if(session()->has('success_msg')){ include_once load_template('common/success_modal'); }?>
+            </div>
+        </div>
         <div class="row mb-3">
             <div class="col-12">
                 <div class="card card-secondary">

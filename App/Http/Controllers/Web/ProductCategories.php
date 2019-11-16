@@ -51,7 +51,8 @@ class ProductCategories extends Base
         }
 
         (new CategoryRepository())->create($data);
-        return Response::make()->back();
+
+        return Response::make()->withSuccessMsg("Категорията беше създадена успешно!")->back();
     }
 
     /**
@@ -71,7 +72,7 @@ class ProductCategories extends Base
 
         (new CategoryRepository())->updateById($cat_id, $data);
 
-        return Response::make()->back();
+        return Response::make()->withSuccessMsg("Категорията беше редактирана успешно!")->back();
     }
 
     /**
@@ -81,6 +82,6 @@ class ProductCategories extends Base
     public function delete($cat_id)
     {
         (new CategoryRepository())->deleteById((int) $cat_id);
-        return Response::make()->back();
+        return Response::make()->withSuccessMsg('Категорията беше изтрита успешно!')->back();
     }
 }

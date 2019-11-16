@@ -41,14 +41,14 @@ class Shops extends Base
         }
 
         (new ShopRepository())->create($data);
-        Response::redirect('shops');
+        Response::make()->withSuccessMsg("Магазина беше създаден успешно.")->redirect('shops');
     }
     /**
      * @param int $id
      */
     public function edit($id)
     {
-        Response::withTemplate('shops/edit', [
+        return Response::withTemplate('shops/edit', [
             "shop" => (new ShopRepository())->findById($id)
         ]);
     }
@@ -69,7 +69,7 @@ class Shops extends Base
 
         (new ShopRepository())->updateById($id, $data);
 
-        Response::redirect("shops");
+        return Response::make()->withSuccessMsg("Магазина беше редактиран успешно.")->redirect('shops');
     }
 
     /**
@@ -78,6 +78,6 @@ class Shops extends Base
     public function delete($id)
     {
         (new ShopRepository())->deleteById($id);
-        Response::redirect("shops");
+        return Response::make()->withSuccessMsg("Магазина беше изтрит успешно.")->redirect('shops');
     }
 }

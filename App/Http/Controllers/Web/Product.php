@@ -18,7 +18,7 @@ class Product extends Base
     {
         $products = (new ProductRepository())->applyFilters($this->request->get('filters', []))->paginate($this->request->get('page'), 10);
         $categories = (new CategoryRepository())->allWithSubCategories();
-        
+
         Response::withTemplate("products/index", ["products" => $products->get(),"productsPagination"=>$products, "categories" => $categories]);
     }
     /**
@@ -62,7 +62,7 @@ class Product extends Base
         
         $productRepo->manageProductDetails($product->first()->id, $data['additional']);
 
-        return Response::redirect("products");
+        return Response::make()->withSuccessMsg("Продукта беше добавен успешно.")->redirect("products");
     }
 
     /**
@@ -102,7 +102,7 @@ class Product extends Base
         $productRepo->updateById($id, $data);
         $productRepo->manageProductDetails($id, $data['additional']);
         
-        return Response::redirect("products");
+        return Response::make()->withSuccessMsg("Продукта беше редактиран успешно.")->redirect("products");
     }
 
     /**
@@ -114,6 +114,6 @@ class Product extends Base
     public function delete($id)
     {
         (new ProductRepository())->deleteById($id);
-        return Response::redirect("products");
+        return Response::make()->withSuccessMsg("Продукта беше изтрит успешно.")->redirect("products");
     }
 }

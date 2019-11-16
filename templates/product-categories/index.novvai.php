@@ -9,6 +9,11 @@ include_once base_path() . 'templates/layout/header.novvai.php';
                 <h1>Категории</h1>
             </div>
         </div>
+        <div class="row">
+            <div class="col-12">
+                <?php if(session()->has('success_msg')){ include_once load_template('common/success_modal'); }?>
+            </div>
+        </div>
         <div class="card card-info">
             <div class="card-header">
                 <h3 class="card-title">Добавяне</h3>
