@@ -99,7 +99,7 @@ include_once base_path() . 'templates/layout/header.novvai.php';
                                         <a href="#" data-nv-action="remove" class="btn btn-danger"><span class="fas fa-times"></span></a>
                                     </div>
                                 </div>
-                            <?
+                            <?php
                             }
                             ?>
                         </div>
@@ -146,5 +146,5 @@ include_once base_path() . 'templates/layout/header.novvai.php';
 </script>
 
 <?php
-include_once base_path() . 'templates/layout/footer.novvai.php';
+include_once base_path() . 'templates/layout/footer.novvai.php'; 
 ?>

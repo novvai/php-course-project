@@ -11,16 +11,18 @@ use App\Http\Controllers\Base as Controller;
 class Kernel
 {
     private $base_path;
+    private $hasFastCGI = true;
     private $router_instance;
     private $request_instance;
     private $middleware_instance;
-
+    
     public function  __construct()
     {
         $this->base_path = base_path();
         $this->router_instance = Router::getInstance();
         $this->request_instance = Request::getInstance();
         $this->middleware_instance = MiddlewareManager::getInstance();
+        $this->startRequestProcess();
     }
 
     public function router()
@@ -51,10 +53,31 @@ class Kernel
 
         return $this->router()->getRequestedRoute($method, $path);
     }
+
+    private function startRequestProcess()
+    {
+        if(!($this->hasFastCGI = function_exists('fastcgi_finish_request'))){
+            ob_start();
+            header("Connection: close\r\n"); 
+            header('Content-Encoding: none\r\n');
+        }
+    }
+    private function endRequestProcess()
+    {
+        if($this->hasFastCGI){
+            session_write_close(); //close the session
+            fastcgi_finish_request();
+        }else{
+            $size = ob_get_length();
+            header("Content-Length: ". $size . "\r\n"); 
+            // send info immediately and close connection
+            ob_end_flush();
+            flush();
+        }
+    }
     
     private function send()
     {
-        session_write_close(); //close the session
-        fastcgi_finish_request();
+        $this->endRequestProcess();   
     }
 }

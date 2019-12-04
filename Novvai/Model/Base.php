@@ -322,7 +322,8 @@ class Base implements Arrayable
      */
     private function extractTableName(string $className): string
     {
-        $cl = end(explode('\\', $className));
+        $clComponents = explode('\\', $className);
+        $cl = end($clComponents);
         preg_match_all('/[A-Z]/', $cl, $matches);
         for ($i = 0; $i < count($matches[0]); $i++) {
             $replacer = ($i ?  "_" : "") . strtolower($matches[0][$i]);
