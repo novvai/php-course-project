@@ -2,6 +2,7 @@
 
 namespace Novvai\Request;
 
+// singleton
 class Request
 {
     private static $instance = null;
@@ -83,6 +84,27 @@ class Request
     public function files()
     {
         return $this->filesBag;
+    }
+
+    /**
+     * Returns the request method 
+     * [GET, POST, PUT, DELETE]
+     * 
+     * @return string
+     */
+    public function getMethod() : string
+    {
+        return $_REQUEST['_method'] ?? $_SERVER['REQUEST_METHOD'];
+    }
+
+    /**
+     * Returns the requested uri without the GET parameters
+     * 
+     * @return string
+     */
+    public function getUri() : string
+    {
+        return parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH);
     }
 
     private function appendGETParams()

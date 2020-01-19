@@ -15,7 +15,7 @@ class Kernel
     private $router_instance;
     private $request_instance;
     private $middleware_instance;
-    
+
     public function  __construct()
     {
         $this->base_path = base_path();
@@ -25,59 +25,84 @@ class Kernel
         $this->startRequestProcess();
     }
 
-    public function router()
+    /**
+     * Global router accessor
+     */
+    public function router(): Router
     {
         return $this->router_instance;
     }
 
-    public function request()
+    /**
+     * Global request accessor
+     */
+    public function request(): Request
     {
         return $this->request_instance;
     }
 
-    public function execute()
+    /**
+     * Bootstrap and process the requested route 
+     */
+    public function execute(): void
     {
         list($class, $execMethod, $arguments, $middleware_group) = $this->getRequestedRoute();
 
-        echo $this->middleware_instance->process($middleware_group,[$class, $execMethod, $arguments]);
-        
+        echo $this->middleware_instance->process($middleware_group, [$class, $execMethod, $arguments]);
+
         $this->send();
     }
 
-
-    private function getRequestedRoute()
+    /**
+     * Get requested route essential parametes 
+     * for the request processing
+     * 
+     * @return array
+     */
+    private function getRequestedRoute(): array
     {
-        $method = isset($_REQUEST['_method'])?$_REQUEST['_method']:$_SERVER['REQUEST_METHOD'];
-
-        $path = explode('?', $_SERVER['REQUEST_URI'])[0];
+        $path   = $this->request()->getUri();
+        $method = $this->request()->getMethod();
 
         return $this->router()->getRequestedRoute($method, $path);
     }
 
-    private function startRequestProcess()
+    /**
+     * Starts request processing with the correct type function
+     * depending on the server configuration
+     */
+    private function startRequestProcess(): void
     {
-        if(!($this->hasFastCGI = function_exists('fastcgi_finish_request'))){
+        if (!($this->hasFastCGI = function_exists('fastcgi_finish_request'))) {
             ob_start();
-            header("Connection: close\r\n"); 
+            header("Connection: close\r\n");
             header('Content-Encoding: none\r\n');
         }
     }
-    private function endRequestProcess()
+
+    /**
+     * Ends the request processing
+     * continues the execution of background processes if there are any
+     */
+    private function endRequestProcess(): void
     {
-        if($this->hasFastCGI){
+        if ($this->hasFastCGI) {
             session_write_close(); //close the session
             fastcgi_finish_request();
-        }else{
+        } else {
             $size = ob_get_length();
-            header("Content-Length: ". $size . "\r\n"); 
+            header("Content-Length: " . $size . "\r\n");
             // send info immediately and close connection
             ob_end_flush();
             flush();
         }
     }
-    
-    private function send()
+
+    /**
+     * Send back the request to the client
+     */
+    private function send(): void
     {
-        $this->endRequestProcess();   
+        $this->endRequestProcess();
     }
 }

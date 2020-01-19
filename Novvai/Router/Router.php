@@ -72,7 +72,7 @@ class Router
     /**
      * Validate and add to the corresponding array
      */
-    private function registerRoute($type, $route, $executioner)
+    private function registerRoute($type, $route, $executioner): void
     {
         list($class, $method) = $this->extractComponents($executioner);
         $this->registerMiddleware($route);
@@ -109,10 +109,16 @@ class Router
         $instance->registerRoute('DELETE', $route, $executioner);
     }
 
-    public static function middlewareGroup($string, callable $fn)
+    /**
+     * Registers register middleware group
+     * 
+     * @param string $mdGroupName
+     * @param callable $fn
+     */
+    public static function middlewareGroup(string $mdGroupName, callable $fn): void
     {
         $instance = self::getInstance();
-        $instance->middlewareBuffer[] = $string;
+        $instance->middlewareBuffer[] = $mdGroupName;
         $fn();
         array_pop($instance->middlewareBuffer);
     }
@@ -141,7 +147,7 @@ class Router
      * 
      * @param string $route
      */
-    private function registerMiddleware(string $route)
+    private function registerMiddleware(string $route): void
     {
         $this->middlewareGroups = array_merge($this->middlewareGroups, [$route => $this->middlewareBuffer]);
     }
@@ -150,7 +156,7 @@ class Router
      * 
      * @throw Exceptions/NotFound
      */
-    private function checkExecutioner(string $className)
+    private function checkExecutioner(string $className): void
     {
         if (!class_exists($className)) {
             throw new NotFound($className, 40001);
