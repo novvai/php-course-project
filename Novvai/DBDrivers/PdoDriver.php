@@ -33,11 +33,11 @@ class PdoDriver extends Base
     protected function dbConnect(): void
     {
         $db_type = static::$config['connection'];
-        list($host, $port, $db_name, $user, $pass) = array_values(static::$config[$db_type]);
 
+        extract(static::$config[$db_type]);
         $dsn = "$db_type:host=$host;dbname=$db_name;port=$port";
 
-        $this->connection = new PDO($dsn, $user, $pass, self::DRIVER_OPTIONS);
+        $this->connection = new PDO($dsn, $username, $password, self::DRIVER_OPTIONS);
     }
 
     /**

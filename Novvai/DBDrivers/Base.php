@@ -2,6 +2,7 @@
 
 namespace Novvai\DBDrivers;
 
+use Exception;
 use Novvai\DBDrivers\Interfaces\DBConnectionInterface;
 
 abstract class Base implements DBConnectionInterface
